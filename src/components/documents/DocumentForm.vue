@@ -14,30 +14,37 @@
             <v-card-text>
                 <v-container>
                     <v-layout wrap>
+
+                        <v-flex xs12>
+                            <v-text-field
+                                    label="Số hiệu"
+                                    v-model="form.code"
+                            ></v-text-field>
+                        </v-flex>
+
                         <v-flex xs12>
                             <v-text-field
                                     label="Tiêu đề"
                                     v-model="form.title"
                             ></v-text-field>
                         </v-flex>
+
                         <v-flex xs12>
                             <v-textarea
                                     label="Trích yếu"
                                     v-model="form.summary"
+                                    outline
                             ></v-textarea>
                         </v-flex>
+
                         <v-flex xs12>
-                            <v-text-field
-                                    label="Thông tư"
-                                    v-model="form.title"
-                            ></v-text-field>
+                            <v-textarea
+                                    label="Thông tư/ Nghị định"
+                                    v-model="form.decree"
+                                    outline
+                            ></v-textarea>
                         </v-flex>
-                        <v-flex xs12>
-                            <v-text-field
-                                    label="Nghị định"
-                                    v-model="form.title"
-                            ></v-text-field>
-                        </v-flex>
+
                         <v-flex xs12>
                             <v-text-field
                                     label="Chi tiết"
@@ -45,11 +52,12 @@
                             ></v-text-field>
                         </v-flex>
 
+                         <!--Arrival Date-->
                         <v-flex md6 sm12>
                             <v-dialog
-                                    ref="startDateDialog"
-                                    v-model="startDateMenu"
-                                    :return-value.sync="form.startDate"
+                                    ref="arrivalDateDialog"
+                                    v-model="arrivalDateMenu"
+                                    :return-value.sync="form.arrivalDate"
                                     persistent
                                     lazy
                                     full-width
@@ -57,8 +65,8 @@
                             >
                                 <template #activator="{ on }">
                                     <v-text-field
-                                            v-model="form.startDate"
-                                            label="Ngày bắt đầu"
+                                            v-model="form.arrivalDate"
+                                            label="Ngày văn bán đến"
                                             prepend-inner-icon="mdi-calendar"
                                             readonly
                                             clearable
@@ -66,22 +74,99 @@
                                     ></v-text-field>
                                 </template>
                                 <v-date-picker
-                                        v-if="startDateMenu"
-                                        v-model="form.startDate"
+                                        v-if="arrivalDateMenu"
+                                        v-model="form.arrivalDate"
                                         full-width
                                         locale="vi-vn"
                                 >
                                     <v-spacer></v-spacer>
-                                    <v-btn flat color="primary" @click="startDateMenu = false">
+                                    <v-btn flat color="primary" @click="arrivalDateMenu = false">
                                         Hủy
                                     </v-btn>
-                                    <v-btn flat color="primary" @click="$refs.startDateDialog.save(form.startDate)">
+                                    <v-btn flat color="primary" @click="$refs.arrivalDateDialog.save(form.arrivalDate)">
                                         Lưu
                                     </v-btn>
                                 </v-date-picker>
                             </v-dialog>
                         </v-flex>
 
+                        <v-flex md6></v-flex>
+
+                         <!--Effective Date-->
+                        <v-flex md6 sm12>
+                            <v-dialog
+                                    ref="effectiveDateDialog"
+                                    v-model="effectiveDateMenu"
+                                    :return-value.sync="form.effectiveDate"
+                                    persistent
+                                    lazy
+                                    full-width
+                                    width="300px"
+                            >
+                                <template #activator="{ on }">
+                                    <v-text-field
+                                            v-model="form.effectiveDate"
+                                            label="Ngày bắt đầu hiệu lực"
+                                            prepend-inner-icon="mdi-calendar"
+                                            readonly
+                                            clearable
+                                            v-on="on"
+                                    ></v-text-field>
+                                </template>
+                                <v-date-picker
+                                        v-if="effectiveDateMenu"
+                                        v-model="form.effectiveDate"
+                                        full-width
+                                        locale="vi-vn"
+                                >
+                                    <v-spacer></v-spacer>
+                                    <v-btn flat color="primary" @click="effectiveDateMenu = false">
+                                        Hủy
+                                    </v-btn>
+                                    <v-btn flat color="primary" @click="$refs.effectiveDateDialog.save(form.effectiveDate)">
+                                        Lưu
+                                    </v-btn>
+                                </v-date-picker>
+                            </v-dialog>
+                        </v-flex>
+
+                         <!--Effective End Date-->
+                        <v-flex md6 sm12>
+                            <v-dialog
+                                    ref="effectiveEndDateDialog"
+                                    v-model="effectiveEndDateMenu"
+                                    :return-value.sync="form.effectiveEndDate"
+                                    persistent
+                                    lazy
+                                    full-width
+                                    width="300px"
+                            >
+                                <template #activator="{ on }">
+                                    <v-text-field
+                                            v-model="form.effectiveEndDate"
+                                            label="Ngày hết hiệu lực"
+                                            prepend-inner-icon="mdi-calendar"
+                                            readonly
+                                            clearable
+                                            v-on="on"
+                                    ></v-text-field>
+                                </template>
+                                <v-date-picker
+                                        v-if="effectiveEndDateMenu"
+                                        v-model="form.effectiveEndDate"
+                                        full-width
+                                        locale="vi-vn"
+                                >
+                                    <v-spacer></v-spacer>
+                                    <v-btn flat color="primary" @click="effectiveEndDateMenu = false">
+                                        Hủy
+                                    </v-btn>
+                                    <v-btn flat color="primary" @click="$refs.effectiveEndDateDialog.save(form.effectiveEndDate)">
+                                        Lưu
+                                    </v-btn>
+                                </v-date-picker>
+                            </v-dialog>
+                        </v-flex>
 
                     </v-layout>
                 </v-container>
@@ -107,6 +192,8 @@
 </template>
 
 <script>
+    import Axios from 'axios'
+
     export default {
         name: "DocumentForm",
         props: {
@@ -114,10 +201,14 @@
                 type: Object,
                 default() {
                     return {
+                        code: '',
                         title: '',
                         summary: '',
+                        decree: '',
                         detail: '',
-                        startDate: '',
+                        arrivalDate: '',
+                        effectiveDate: '',
+                        effectiveEndDate: '',
                     }
                 }
             },
@@ -128,7 +219,9 @@
                 dialog: false,
                 loading: false,
                 loaded: false,
-                startDateMenu: false,
+                arrivalDateMenu: false,
+                effectiveDateMenu: false,
+                effectiveEndDateMenu: false,
             }
         },
         methods: {
