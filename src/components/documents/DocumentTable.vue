@@ -11,7 +11,7 @@
                 Tải lại
             </v-btn>
             <v-spacer></v-spacer>
-            <DocumentForm @refresh="refresh">
+            <DocumentForm @refresh="refresh" creating>
                 <template #activator="{on}">
                     <v-btn v-on="on" color="primary">
                         <v-icon left>add</v-icon>
@@ -79,6 +79,7 @@
                 this.loading = true;
                 Axios.get(`http://localhost:8080/documents/creates`)
                     .then(response => {
+                        console.log(response.data);
                         this.documents = response.data.content;
                     })
                     .catch(console.error)

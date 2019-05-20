@@ -18,29 +18,49 @@
                         <v-flex xs12>
                             <v-text-field
                                     label="Số hiệu"
-                                    v-model="form.code"
+                                    v-model="formData.code"
                             ></v-text-field>
                         </v-flex>
 
                         <v-flex xs12>
                             <v-text-field
                                     label="Tiêu đề"
-                                    v-model="form.title"
+                                    v-model="formData.title"
                             ></v-text-field>
                         </v-flex>
 
                         <v-flex xs12>
                             <v-textarea
                                     label="Trích yếu"
-                                    v-model="form.summary"
+                                    v-model="formData.summary"
                                     outline
                             ></v-textarea>
+                        </v-flex>
+
+                        <v-flex md12 sm12>
+                            <v-autocomplete
+                                            v-model="formData.outsiderId"
+                                            :items="outsiderOptions"
+                                            item-value="id"
+                                            :loading="outsiderOptionsLoading"
+                                            :search-input.sync="outsiderOptionsSearch"
+                                            label="Đối tượng ngoài"
+                                            clearable
+                                            hide-no-data
+                            >
+                                <template #item="{item}">
+                                    {{item.name}} - {{item.code}}
+                                </template>
+                                <template #selection="{item}">
+                                    {{item.name}} - {{item.code}}
+                                </template>
+                            </v-autocomplete>
                         </v-flex>
 
                         <v-flex xs12>
                             <v-textarea
                                     label="Thông tư/ Nghị định"
-                                    v-model="form.decree"
+                                    v-model="formData.decree"
                                     outline
                             ></v-textarea>
                         </v-flex>
@@ -48,16 +68,16 @@
                         <v-flex xs12>
                             <v-text-field
                                     label="Chi tiết"
-                                    v-model="form.detail"
+                                    v-model="formData.detail"
                             ></v-text-field>
                         </v-flex>
 
-                         <!--Arrival Date-->
+                        <!--Arrival Date-->
                         <v-flex md6 sm12>
                             <v-dialog
                                     ref="arrivalDateDialog"
                                     v-model="arrivalDateMenu"
-                                    :return-value.sync="form.arrivalDate"
+                                    :return-value.sync="formData.arrivalDate"
                                     persistent
                                     lazy
                                     full-width
@@ -65,7 +85,7 @@
                             >
                                 <template #activator="{ on }">
                                     <v-text-field
-                                            v-model="form.arrivalDate"
+                                            v-model="formData.arrivalDate"
                                             label="Ngày văn bán đến"
                                             prepend-inner-icon="mdi-calendar"
                                             readonly
@@ -75,7 +95,7 @@
                                 </template>
                                 <v-date-picker
                                         v-if="arrivalDateMenu"
-                                        v-model="form.arrivalDate"
+                                        v-model="formData.arrivalDate"
                                         full-width
                                         locale="vi-vn"
                                 >
@@ -83,7 +103,8 @@
                                     <v-btn flat color="primary" @click="arrivalDateMenu = false">
                                         Hủy
                                     </v-btn>
-                                    <v-btn flat color="primary" @click="$refs.arrivalDateDialog.save(form.arrivalDate)">
+                                    <v-btn flat color="primary"
+                                           @click="$refs.arrivalDateDialog.save(formData.arrivalDate)">
                                         Lưu
                                     </v-btn>
                                 </v-date-picker>
@@ -92,12 +113,12 @@
 
                         <v-flex md6></v-flex>
 
-                         <!--Effective Date-->
+                        <!--Effective Date-->
                         <v-flex md6 sm12>
                             <v-dialog
                                     ref="effectiveDateDialog"
                                     v-model="effectiveDateMenu"
-                                    :return-value.sync="form.effectiveDate"
+                                    :return-value.sync="formData.effectiveDate"
                                     persistent
                                     lazy
                                     full-width
@@ -105,7 +126,7 @@
                             >
                                 <template #activator="{ on }">
                                     <v-text-field
-                                            v-model="form.effectiveDate"
+                                            v-model="formData.effectiveDate"
                                             label="Ngày bắt đầu hiệu lực"
                                             prepend-inner-icon="mdi-calendar"
                                             readonly
@@ -115,7 +136,7 @@
                                 </template>
                                 <v-date-picker
                                         v-if="effectiveDateMenu"
-                                        v-model="form.effectiveDate"
+                                        v-model="formData.effectiveDate"
                                         full-width
                                         locale="vi-vn"
                                 >
@@ -123,19 +144,20 @@
                                     <v-btn flat color="primary" @click="effectiveDateMenu = false">
                                         Hủy
                                     </v-btn>
-                                    <v-btn flat color="primary" @click="$refs.effectiveDateDialog.save(form.effectiveDate)">
+                                    <v-btn flat color="primary"
+                                           @click="$refs.effectiveDateDialog.save(formData.effectiveDate)">
                                         Lưu
                                     </v-btn>
                                 </v-date-picker>
                             </v-dialog>
                         </v-flex>
 
-                         <!--Effective End Date-->
+                        <!--Effective End Date-->
                         <v-flex md6 sm12>
                             <v-dialog
                                     ref="effectiveEndDateDialog"
                                     v-model="effectiveEndDateMenu"
-                                    :return-value.sync="form.effectiveEndDate"
+                                    :return-value.sync="formData.effectiveEndDate"
                                     persistent
                                     lazy
                                     full-width
@@ -143,7 +165,7 @@
                             >
                                 <template #activator="{ on }">
                                     <v-text-field
-                                            v-model="form.effectiveEndDate"
+                                            v-model="formData.effectiveEndDate"
                                             label="Ngày hết hiệu lực"
                                             prepend-inner-icon="mdi-calendar"
                                             readonly
@@ -153,7 +175,7 @@
                                 </template>
                                 <v-date-picker
                                         v-if="effectiveEndDateMenu"
-                                        v-model="form.effectiveEndDate"
+                                        v-model="formData.effectiveEndDate"
                                         full-width
                                         locale="vi-vn"
                                 >
@@ -161,7 +183,8 @@
                                     <v-btn flat color="primary" @click="effectiveEndDateMenu = false">
                                         Hủy
                                     </v-btn>
-                                    <v-btn flat color="primary" @click="$refs.effectiveEndDateDialog.save(form.effectiveEndDate)">
+                                    <v-btn flat color="primary"
+                                           @click="$refs.effectiveEndDateDialog.save(formData.effectiveEndDate)">
                                         Lưu
                                     </v-btn>
                                 </v-date-picker>
@@ -193,6 +216,7 @@
 
 <script>
     import Axios from 'axios'
+    import _ from 'lodash'
 
     export default {
         name: "DocumentForm",
@@ -209,6 +233,7 @@
                         arrivalDate: '',
                         effectiveDate: '',
                         effectiveEndDate: '',
+                        outsiderId: 0,
                     }
                 }
             },
@@ -222,6 +247,10 @@
                 arrivalDateMenu: false,
                 effectiveDateMenu: false,
                 effectiveEndDateMenu: false,
+                formData: this.form,
+                outsiderOptions: [],
+                outsiderOptionsLoading: false,
+                outsiderOptionsSearch: null,
             }
         },
         methods: {
@@ -229,10 +258,44 @@
                 this.dialog = false;
             },
             save() {
+                console.log(this.formData);
                 this.loading = true;
-                this.loading = false;
-                this.close();
-                this.$emit("refresh");
+                const url = `http://localhost:8080/documents`;
+                const data = this.formData;
+                const method = this.creating ? 'POST' : 'PUT';
+                Axios({url, data, method})
+                    .then(response => {
+                        this.close();
+                        this.$emit("refresh");
+                    })
+                    .catch(error => {
+                        if (error.response)
+                            console.log(error.response);
+                    })
+                    .finally(() => {
+                        this.loading = false;
+                    });
+            },
+            getOutsiderOptions(searchValue) {
+                console.log(searchValue);
+                this.outsiderOptionsLoading = true;
+                Axios.get(`http://localhost:8080/outsiders/search/findAllSummaryByNameContainsOrCodeContains`, {
+                    params: {
+                        name: searchValue,
+                        code: searchValue,
+                    }
+                })
+                    .then(response => {
+                        console.log(response.data);
+                        this.outsiderOptions = response.data;
+                    })
+                    .catch(error => {
+                        if (error.response)
+                            console.log(error.response);
+                    })
+                    .finally(() => {
+                        this.outsiderOptionsLoading = false;
+                    })
             }
         },
         watch: {
@@ -240,7 +303,15 @@
                 if (val && !this.loaded) {
                     this.loaded = true;
                 }
+            },
+            outsiderOptionsSearch(val) {
+                if (val && !!val.trim().length) {
+                    this.debouncedGetOutsiderOptions(val.trim());
+                }
             }
+        },
+        created() {
+            this.debouncedGetOutsiderOptions = _.debounce(this.getOutsiderOptions, 500);
         }
     }
 </script>
