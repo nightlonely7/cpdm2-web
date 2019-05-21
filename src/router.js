@@ -26,6 +26,11 @@ export default new Router({
             component: () => import('@/views/DocumentPage.vue')
         },
         {
+            path: '/documents/:id',
+            name: 'document detail',
+            component: () => import('@/views/DocumentDetailPage.vue')
+        },
+        {
             path: '/processes',
             name: 'processes',
             component: () => import('@/views/ProcessPage.vue')
