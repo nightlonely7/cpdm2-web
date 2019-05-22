@@ -1,9 +1,10 @@
 import Vue from 'vue'
 import Router from 'vue-router'
+import store from '@/store.js'
 
 Vue.use(Router);
 
-export default new Router({
+const router = new Router({
     routes: [
         {
             path: '/login',
@@ -37,3 +38,30 @@ export default new Router({
         }
     ]
 })
+
+router.beforeEach((to, from, next) => {
+
+    if (to.path === '/login') {
+        if (store.getters['AUTHENTICATION_STORE/isLoggedIn']) {
+            store.dispatch('AUTHENTICATION_STORE/INIT')
+                .then(() => next('/documents'))
+                .catch(() => next('/login'));
+            return;
+        }
+        next();
+        return;
+    }
+    if (!store.getters['AUTHENTICATION_STORE/isLoggedIn']) {
+        next('/login');
+        return;
+    }
+    if (!store.getters['AUTHENTICATION_STORE/isInit']) {
+        store.dispatch('AUTHENTICATION_STORE/INIT')
+            .then(() => next())
+            .catch(() => next('/login'));
+        return;
+    }
+    next();
+});
+
+export default router;

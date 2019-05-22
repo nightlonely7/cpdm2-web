@@ -51,6 +51,9 @@
             <v-toolbar-title>{{title}}</v-toolbar-title>
             <v-spacer/>
             <span>{{username}}&nbsp; &nbsp; &nbsp;</span>
+            <v-btn icon @click="logout">
+                <v-icon>mdi-logout</v-icon>
+            </v-btn>
         </v-toolbar>
         <v-content>
             <v-container fluid>
@@ -76,6 +79,14 @@
             return {
                 drawer: true,
             }
+        },
+        methods: {
+            logout: function () {
+                this.$store.dispatch('AUTHENTICATION_STORE/LOGOUT')
+                    .then(() => {
+                        this.$router.push('/login');
+                    });
+            },
         },
         computed: {
             ...mapGetters('AUTHENTICATION_STORE', {

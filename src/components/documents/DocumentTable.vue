@@ -1,9 +1,25 @@
 <template>
     <div class="elevation-1">
+        <v-toolbar tabs flat fixed-tabs>
+
+                <v-tabs
+                        v-model="tabs"
+                        slider-color="primary"
+                        color="transparent"
+                >
+                    <v-tab>
+                        <v-icon color="primary">mdi-arrow-collapse-down</v-icon>&nbsp;TẤT CẢ VĂN BẢN LIÊN QUAN
+                    </v-tab>
+                    <v-tab>
+                        <v-icon color="primary">mdi-share</v-icon>&nbsp;VĂN BẢN CHỜ XỬ LÝ
+                    </v-tab>
+                </v-tabs>
+
+        </v-toolbar>
         <v-toolbar flat color="white">
             <v-toolbar-title>
                 <v-icon left>mdi-file-document</v-icon>
-                QUẢN LÝ VĂN BẢN
+                {{executing ? 'VĂN BẢN CHỜ XỬ LÝ' : 'QUẢN LÝ VĂN BẢN'}}
             </v-toolbar-title>
             <v-divider class="mx-2" inset vertical></v-divider>
             <v-btn color="primary" @click="refresh">
@@ -55,8 +71,12 @@
     export default {
         name: "DocumentTable",
         components: {DocumentForm},
+        props: {
+            executing: Boolean,
+        },
         data() {
             return {
+                tabs: 1,
                 documents: [],
                 loading: false,
                 headers: [
@@ -77,9 +97,11 @@
             },
             getDocuments() {
                 this.loading = true;
-                Axios.get(`http://localhost:8080/documents/creates`)
+                const url = this.executing ?
+                    `http://localhost:8080/documents/executing` :
+                    `http://localhost:8080/documents/creates`;
+                Axios.get(url)
                     .then(response => {
-                        console.log(response.data);
                         this.documents = response.data.content;
                     })
                     .catch(console.error)
@@ -91,6 +113,20 @@
         watch: {
             pagination() {
                 this.getDocuments();
+            },
+            tabs(val) {
+                switch (val) {
+                    case 0:
+                        this.executing = false;
+                        this.getDocuments();
+                        break;
+                    case 1:
+                        this.executing = true;
+                        this.getDocuments();
+                        break;
+                    default:
+                        this.getDocuments();
+                }
             }
         }
     }

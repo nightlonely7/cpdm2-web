@@ -88,6 +88,7 @@ export default {
                     .then(response => {
                         const username = response.data.username;
                         const role = response.data.role.replace('ROLE_', '');
+                        console.log(username, role);
                         commit('INIT', {username, role});
                         //
                         // mes.requestPermission().then(function () {
