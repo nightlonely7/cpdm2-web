@@ -4,39 +4,92 @@
             <v-progress-circular indeterminate color="primary" size="64" width="8"></v-progress-circular>
         </div>
         <template v-if="loaded">
-            <table rules="rows" width="100%" style="font-size: 16px;">
+            <table rules="rows" style="font-size: 16px; width: 85%; margin: auto">
                 <tr>
-                    <td style="width: 20%"><b>Tiêu đề</b></td>
-                    <td style="width: 80%"><b>{{document.title}}</b></td>
+                    <td style="width: 25%"><b>Tiêu đề</b></td>
+                    <td style="width: 75%"><b>{{document.title}}</b></td>
                 </tr>
                 <tr>
-                    <td style="width: 20%">Trích yếu</td>
-                    <td style="width: 80%">{{document.summary}}</td>
+                    <td>Mã hiệu</td>
+                    <td>{{document.code}}</td>
                 </tr>
+                <tr>
+                    <td>Nơi ban hành</td>
+                    <td>{{document.outsider.name}} - {{document.outsider.code}}</td>
+                </tr>
+                <tr>
+                    <td>Trích yếu</td>
+                    <td>{{document.summary}}</td>
+                </tr>
+                <tr>
+                    <td>Thông tư / Nghị định</td>
+                    <td>{{document.decree}}</td>
+                </tr>
+                <tr>
+                    <td>Ngày văn bản đến</td>
+                    <td>{{document.arrivalDate}}</td>
+                </tr>
+                <tr>
+                    <td>Ngày văn bản có hiệu lực</td>
+                    <td>{{document.effectiveDate}}</td>
+                </tr>
+                <tr>
+                    <td>Ngày văn bản hết hiệu lực</td>
+                    <td>{{document.effectiveEndDate}}</td>
+                </tr>
+                <tr>
+                    <td>Thời gian tạo</td>
+                    <td>{{document.createdTime}}</td>
+                </tr>
+                <tr>
+                    <td>Quá trình xử lý</td>
+                    <td>
+                        <DocumentProcessTracking :document="{...document}"></DocumentProcessTracking>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Thời gian chỉnh sửa gần nhất</td>
+                    <td>{{document.lastModifiedTime}}</td>
+                </tr>
+
             </table>
 
             <template v-if="!document.startedProcessing">
-                <PutDocumentIntoProcessForm :id="id" @refresh="getDocumentDetail">
+                <DocumentPutIntoProcessForm :id="id" @refresh="getDocumentDetail">
                     <template #activator="{on}">
                         <v-btn v-on="on" color="primary">
                             <v-icon left>build</v-icon>
                             Đưa văn bản vào quy trình xử lý
                         </v-btn>
                     </template>
-                </PutDocumentIntoProcessForm>
+                </DocumentPutIntoProcessForm>
+            </template>
+            <template v-if="document.currentStep && (document.currentStep.executor.username === username)">
+                <DocumentExecutingForm :document="{...document}" @refresh="getDocumentDetail">
+                    <template #activator="{on}">
+                        <v-btn v-on="on" color="primary">
+                            <v-icon left>build</v-icon>
+                            Xử lý văn bản
+                        </v-btn>
+                    </template>
+                </DocumentExecutingForm>
             </template>
         </template>
+
 
     </div>
 </template>
 
 <script>
     import Axios from 'axios'
-    import PutDocumentIntoProcessForm from "@/components/documents/PutDocumentIntoProcessForm";
+    import DocumentPutIntoProcessForm from "@/components/documents/DocumentPutIntoProcessForm";
+    import {mapGetters} from "vuex";
+    import DocumentExecutingForm from "@/components/documents/DocumentExecutingForm";
+    import DocumentProcessTracking from "@/components/documents/DocumentProcessTracking";
 
     export default {
         name: "DocumentDetail",
-        components: {PutDocumentIntoProcessForm},
+        components: {DocumentProcessTracking, DocumentExecutingForm, DocumentPutIntoProcessForm},
         props: {
             id: Number,
         },
@@ -46,6 +99,11 @@
                 loaded: false,
                 document: null,
             }
+        },
+        computed: {
+            ...mapGetters('AUTHENTICATION_STORE', {
+                username: 'username'
+            })
         },
         methods: {
             getDocumentDetail() {
@@ -79,7 +137,8 @@
 </script>
 
 <style scoped>
-    td{
-        padding: 5px;
+    td {
+        padding: 15px;
     }
+
 </style>

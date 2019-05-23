@@ -55,7 +55,7 @@
     import Axios from 'axios'
 
     export default {
-        name: "PutDocumentIntoProcessForm",
+        name: "DocumentPutIntoProcessForm",
         props: {
             id: Number,
         },
@@ -98,7 +98,7 @@
 
                 Axios.get(`http://localhost:8080/document_processes`)
                     .then(response => {
-                        this.documentProcessed = response.data;
+                        this.documentProcessed = response.data.content;
                         this.loaded = true;
                     })
                     .catch(error => {
