@@ -29,6 +29,11 @@ export default new Router({
             path: '/processes',
             name: 'processes',
             component: () => import('@/views/ProcessPage.vue')
+        },
+        {
+            path: '/processes_creating',
+            name: 'processes_creating',
+            component: () => import('@/views/ProcessCreatingPage.vue')
         }
     ]
 })

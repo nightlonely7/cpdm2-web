@@ -21,7 +21,7 @@
             </ProcessForm>
         </v-toolbar>
         <v-data-table
-                :items="documents"
+                :items="processes"
                 :headers="headers"
                 :loading="loading"
                 :pagination.sync="pagination"
@@ -38,10 +38,9 @@
             </template>
 
             <template #items="{item}">
-                <td class="text-xs-left">{{item.title}}</td>
-                <td class="text-xs-left">{{item.summary}}</td>
+                <td class="text-xs-left">{{item.name}}</td>
+                <td class="text-xs-left">{{item.description}}</td>
                 <td class="text-xs-left">{{moment(item.createdTime).format('HH:mm:ss DD-MM-YYYY')}}</td>
-                <td class="text-xs-left">{{moment(item.lastModifiedTime).format('HH:mm:ss DD-MM-YYYY')}}</td>
             </template>
 
         </v-data-table>
@@ -50,19 +49,17 @@
 
 <script>
     import Axios from 'axios';
-    import ProcessForm from "./ProcessForm";
+    import ProcessForm from "./ProcessCreating";
     export default {
         name: "ProcessTable",
-        components: {ProcessForm},
         data() {
             return {
-                documents: [],
+                processes: [],
                 loading: false,
                 headers: [
-                    {text: 'Tiêu đề', value: 'title'},
-                    {text: 'Trích yếu', value: 'summary'},
+                    {text: 'Tên quy trình', value: 'name'},
+                    {text: 'Mô tả', value: 'description'},
                     {text: 'Thời gian tạo', value: 'createdTime'},
-                    {text: 'Thời gian chỉnh sửa gần nhất', value: 'lastModifiedTime'},
                 ],
                 pagination: {
                     sortBy: 'createdTime',
@@ -72,13 +69,13 @@
         },
         methods: {
             refresh() {
-                this.getDocuments();
+                this.getProcesses();
             },
-            getDocuments() {
+            getProcesses() {
                 this.loading = true;
-                Axios.get(`http://localhost:8080/documents/creates`)
+                Axios.get(`http://localhost:8080/document_processes`)
                     .then(response => {
-                        this.documents = response.data.content;
+                        this.processes = response.data.content;
                     })
                     .catch(console.error)
                     .finally(() => {
@@ -88,7 +85,7 @@
         },
         watch: {
             pagination() {
-                this.getDocuments();
+                this.getProcesses();
             }
         }
     }

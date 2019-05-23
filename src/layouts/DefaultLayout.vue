@@ -44,6 +44,14 @@
                         <v-list-tile-title>Quản lý quy trình</v-list-tile-title>
                     </v-list-tile-content>
                 </v-list-tile>
+                <v-list-tile to="/processes_creating">
+                    <v-list-tile-action>
+                        <v-icon>timeline</v-icon>
+                    </v-list-tile-action>
+                    <v-list-tile-content>
+                        <v-list-tile-title>Tạo mới quy trình</v-list-tile-title>
+                    </v-list-tile-content>
+                </v-list-tile>
             </v-list>
         </v-navigation-drawer>
         <v-toolbar dark fixed app color="primary">
