@@ -293,12 +293,12 @@
                 this.loading = true;
                 //Add default outcome for each step
                 for (var i = 0; i < (this.steps.length - 1); i++) {
-                    console.log('run time');
                     this.newOutcome.name = `Kết quả đúng cho bước ${this.steps[i].name}`;
                     this.newOutcome.description = `Mô tả ết quả đúng cho bước ${this.steps[i].name}`;
                     this.newOutcome.nextStepTemporaryId = this.steps[i + 1].temporaryId;
                     this.newOutcome.lastStep = false;
                     var copy = Object.assign({}, this.newOutcome);
+                    console.log(copy);
                     this.steps[i].outcomes.push(copy);
                     Object.assign(this.newOutcome, this.defaultOutcome);
                 }
@@ -314,9 +314,9 @@
                 console.log(this.process);
                 Axios.post(`http://localhost:8080/document_processes`, this.process).then(response => {
                     console.log('success');
-                    // this.steps = [];
-                    // Object.assign(this.process,this.defaultProcess);
-                    // this.numberOfSteps = 0;
+                    this.steps = [];
+                    Object.assign(this.process,this.defaultProcess);
+                    this.numberOfSteps = 0;
                 }).catch(error => {
                     if (error.response)
                         console.log(error.response);
