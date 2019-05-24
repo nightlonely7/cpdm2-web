@@ -71,12 +71,10 @@
     export default {
         name: "DocumentTable",
         components: {DocumentForm},
-        props: {
-            executing: Boolean,
-        },
         data() {
             return {
                 tabs: 1,
+                executing: Boolean,
                 documents: [],
                 loading: false,
                 headers: [
