@@ -58,6 +58,7 @@
                 <td class="text-xs-left">{{item.summary}}</td>
                 <td class="text-xs-left">{{moment(item.createdTime).format('HH:mm:ss DD-MM-YYYY')}}</td>
                 <td class="text-xs-left">{{moment(item.lastModifiedTime).format('HH:mm:ss DD-MM-YYYY')}}</td>
+                <td class="text-xs-left"><router-link :to="`/documents/${item.id}`">Xem chi tiết</router-link></td>
             </template>
 
         </v-data-table>
@@ -82,6 +83,7 @@
                     {text: 'Trích yếu', value: 'summary'},
                     {text: 'Thời gian tạo', value: 'createdTime'},
                     {text: 'Thời gian chỉnh sửa gần nhất', value: 'lastModifiedTime'},
+                    {text: 'Thao tác'},
                 ],
                 pagination: {
                     sortBy: 'createdTime',
