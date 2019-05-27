@@ -9,28 +9,32 @@ import 'material-design-icons-iconfont/dist/material-design-icons.css'
 import axios from 'axios'
 import moment from 'moment'
 
+import CKEditor from '@ckeditor/ckeditor5-vue';
+
+Vue.use(CKEditor);
+
 Vue.use(Vuetify, {
-  iconfont: 'mdi'
+    iconfont: 'mdi'
 });
 Vue.config.productionTip = false;
 Vue.prototype.moment = moment;
 
 axios.interceptors.request.use(
     (config) => {
-      // console.log(config);
-      let token = localStorage.getItem('cpdm_token');
-      if (token) {
-        config.headers['Authorization'] = `Bearer ${token}`;
-      }
-      return config;
+        // console.log(config);
+        let token = localStorage.getItem('cpdm_token');
+        if (token) {
+            config.headers['Authorization'] = `Bearer ${token}`;
+        }
+        return config;
     },
     (error) => {
-      return Promise.reject(error);
+        return Promise.reject(error);
     }
 );
 
 new Vue({
-  router,
-  store,
-  render: h => h(App)
+    router,
+    store,
+    render: h => h(App)
 }).$mount('#app');

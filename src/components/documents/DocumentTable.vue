@@ -83,7 +83,7 @@
                     {text: 'Trích yếu', value: 'summary'},
                     {text: 'Thời gian tạo', value: 'createdTime'},
                     {text: 'Thời gian chỉnh sửa gần nhất', value: 'lastModifiedTime'},
-                    {text: 'Thao tác'},
+                    {text: 'Thao tác', value: null},
                 ],
                 pagination: {
                     sortBy: 'createdTime',

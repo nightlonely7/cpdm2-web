@@ -54,6 +54,16 @@
 
             </table>
 
+            <br>
+
+            <v-card>
+                <v-toolbar dark dense flat color="primary">
+                    <v-toolbar-title>Nội dung chi tiết văn bản</v-toolbar-title>
+                </v-toolbar>
+                <v-card-text class="document-detail" v-html="document.detail"></v-card-text>
+
+            </v-card>
+
             <template v-if="!document.startedProcessing">
                 <DocumentPutIntoProcessForm :id="id" @refresh="getDocumentDetail">
                     <template #activator="{on}">
@@ -140,5 +150,19 @@
     td {
         padding: 15px;
     }
-
+    .document-detail >>> .table td{
+        border: 1px solid black;
+        border-collapse: collapse;
+        padding: 5px;
+    }
+    .document-detail >>> .table th{
+        border: 1px solid black;
+        border-collapse: collapse;
+        padding: 5px;
+    }
+    .document-detail >>> .table table{
+        border: 1px solid black;
+        border-collapse: collapse;
+        margin: auto;
+    }
 </style>

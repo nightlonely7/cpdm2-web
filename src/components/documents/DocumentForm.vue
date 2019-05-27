@@ -39,20 +39,22 @@
 
                         <v-flex md12 sm12>
                             <v-autocomplete
-                                            v-model="formData.outsiderId"
-                                            :items="outsiderOptions"
-                                            item-value="id"
-                                            :loading="outsiderOptionsLoading"
-                                            :search-input.sync="outsiderOptionsSearch"
-                                            label="Đối tượng ngoài"
-                                            clearable
-                                            hide-no-data
+                                    v-model="formData.outsiderId"
+                                    :items="outsiderOptions"
+                                    item-value="id"
+                                    :item-text="itemText"
+                                    :loading="outsiderOptionsLoading"
+                                    :search-input.sync="outsiderOptionsSearch"
+                                    label="Đối tượng ngoài"
+                                    clearable
+                                    hide-no-data
+                                    cache-items
                             >
                                 <template #item="{item}">
-                                    {{item.name}} - {{item.code}}
+                                    {{item.code}} - {{item.name}}
                                 </template>
                                 <template #selection="{item}">
-                                    {{item.name}} - {{item.code}}
+                                    {{item.code}} - {{item.name}}
                                 </template>
                             </v-autocomplete>
                         </v-flex>
@@ -66,10 +68,12 @@
                         </v-flex>
 
                         <v-flex xs12>
-                            <v-text-field
-                                    label="Chi tiết"
-                                    v-model="formData.detail"
-                            ></v-text-field>
+                            <v-label>Chi tiết</v-label>
+                            <ckeditor :editor="editor"
+                                      @ready="onEditorReady"
+                                      v-model="formData.detail"
+                                      :config="editorConfig"
+                            ></ckeditor>
                         </v-flex>
 
                         <!--Arrival Date-->
@@ -86,7 +90,7 @@
                                 <template #activator="{ on }">
                                     <v-text-field
                                             v-model="formData.arrivalDate"
-                                            label="Ngày văn bán đến"
+                                            label="Ngày văn bản đến"
                                             prepend-inner-icon="mdi-calendar"
                                             readonly
                                             clearable
@@ -217,6 +221,8 @@
 <script>
     import Axios from 'axios'
     import _ from 'lodash'
+    import DecoupledEditor from '@ckeditor/ckeditor5-build-decoupled-document';
+    import '@ckeditor/ckeditor5-build-decoupled-document/build/translations/vi'
 
     export default {
         name: "DocumentForm",
@@ -251,6 +257,18 @@
                 outsiderOptions: [],
                 outsiderOptionsLoading: false,
                 outsiderOptionsSearch: null,
+                editor: DecoupledEditor,
+                editorData: '',
+                editorConfig: {
+                    language: 'vi',
+                    toolbar: [
+                        'heading', '|',
+                        'fontSize', 'fontFamily', '|',
+                        'bold', 'italic', 'underline', 'strikeThrough', 'highlight', '|',
+                        'alignment', '|',
+                        'bulletedList', 'numberedList', 'blockQuote', 'insertTable', '|',
+                        'undo', 'redo'],
+                },
             }
         },
         methods: {
@@ -296,6 +314,16 @@
                     .finally(() => {
                         this.outsiderOptionsLoading = false;
                     })
+            },
+            onEditorReady(editor) {
+                // Insert the toolbar before the editable area.
+                editor.ui.view.editable.element.parentElement.insertBefore(
+                    editor.ui.view.toolbar.element,
+                    editor.ui.view.editable.element
+                );
+            },
+            itemText(item) {
+                return `${item.code} - ${item.name}`;
             }
         },
         watch: {
@@ -317,5 +345,7 @@
 </script>
 
 <style scoped>
-
+    .ck-editor__editable {
+        min-height: 500px;
+    }
 </style>
