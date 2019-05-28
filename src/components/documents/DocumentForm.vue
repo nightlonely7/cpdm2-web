@@ -67,12 +67,40 @@
                             ></v-textarea>
                         </v-flex>
 
+                        <v-flex xs12 md8>
+                            <v-select
+                                    label="Bản mẫu"
+                                    v-model="templateId"
+                                    :items="templateOptions"
+                                    item-value="id"
+                                    item-text="name"
+                                    @input="getTemplateDetail"
+                                    append-outer-icon="mdi-refresh"
+                                    @click:append-outer="getTemplateOptions"
+                                    :loading="templateOptionsLoading"
+                            >
+                            </v-select>
+
+                        </v-flex>
+
+                        <v-flex xs12 md4 pl-5 pt-2>
+                            <DocumentTemplateForm>
+                                <template #activator="{on}">
+                                    <v-btn v-on="on" color="primary">
+                                        <v-icon left>add</v-icon>
+                                        Thêm bản mẫu
+                                    </v-btn>
+                                </template>
+                            </DocumentTemplateForm>
+                        </v-flex>
+
                         <v-flex xs12>
                             <v-label>Chi tiết</v-label>
                             <ckeditor :editor="editor"
                                       @ready="onEditorReady"
                                       v-model="formData.detail"
                                       :config="editorConfig"
+                                      style="height: 500px"
                             ></ckeditor>
                         </v-flex>
 
@@ -223,9 +251,11 @@
     import _ from 'lodash'
     import DecoupledEditor from '@ckeditor/ckeditor5-build-decoupled-document';
     import '@ckeditor/ckeditor5-build-decoupled-document/build/translations/vi'
+    import DocumentTemplateForm from "./DocumentTemplateForm";
 
     export default {
         name: "DocumentForm",
+        components: {DocumentTemplateForm},
         props: {
             form: {
                 type: Object,
@@ -269,6 +299,9 @@
                         'bulletedList', 'numberedList', 'blockQuote', 'insertTable', '|',
                         'undo', 'redo'],
                 },
+                templateId: 0,
+                templateOptions: [],
+                templateOptionsLoading: false,
             }
         },
         methods: {
@@ -295,7 +328,6 @@
                     });
             },
             getOutsiderOptions(searchValue) {
-                console.log(searchValue);
                 this.outsiderOptionsLoading = true;
                 Axios.get(`http://localhost:8080/outsiders/search/findAllSummaryByNameContainsOrCodeContains`, {
                     params: {
@@ -324,11 +356,37 @@
             },
             itemText(item) {
                 return `${item.code} - ${item.name}`;
+            },
+            getTemplateOptions() {
+                this.templateOptionsLoading = true;
+                Axios.get(`http://localhost:8080/templates`)
+                    .then(response => {
+                        this.templateOptions = response.data;
+                    })
+                    .catch(error => {
+                        if (error.response)
+                            console.log(error.response);
+                    })
+                    .finally(() => {
+                        this.templateOptionsLoading = false;
+                    })
+            },
+            getTemplateDetail() {
+                console.log('get template detail');
+                Axios.get(`http://localhost:8080/templates/${this.templateId}`)
+                    .then(response => {
+                        this.formData.detail = response.data.template;
+                    })
+                    .catch(error => {
+                        if (error.response)
+                            console.log(error.response);
+                    })
             }
         },
         watch: {
             dialog(val) {
                 if (val && !this.loaded) {
+                    this.getTemplateOptions();
                     this.loaded = true;
                 }
             },
@@ -336,7 +394,7 @@
                 if (val && !!val.trim().length) {
                     this.debouncedGetOutsiderOptions(val.trim());
                 }
-            }
+            },
         },
         created() {
             this.debouncedGetOutsiderOptions = _.debounce(this.getOutsiderOptions, 500);
@@ -345,7 +403,5 @@
 </script>
 
 <style scoped>
-    .ck-editor__editable {
-        min-height: 500px;
-    }
+
 </style>
