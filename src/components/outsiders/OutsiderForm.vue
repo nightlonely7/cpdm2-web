@@ -1,5 +1,5 @@
 <template>
-    <v-dialog v-model="dialog" persistent width="1000px">
+    <v-dialog v-model="dialog" persistent width="500px">
         <template #activator="{on}">
             <slot name="activator" :on="on"></slot>
         </template>
@@ -9,7 +9,7 @@
                     <v-icon>close</v-icon>
                 </v-btn>
                 <v-toolbar-title>
-                    {{creating ? 'Tạo mới bản mẫu' : 'Chỉnh sửa bản mẫu'}}
+                    {{creating ? 'Tạo mới nơi ban hành' : 'Chỉnh sửa nơi ban hành'}}
                 </v-toolbar-title>
             </v-toolbar>
 
@@ -19,18 +19,23 @@
 
                         <v-flex xs12>
                             <v-text-field
-                                    label="Tên bản mẫu"
+                                    label="Số hiệu nơi ban hành"
+                                    v-model="formData.code"
+                            ></v-text-field>
+                        </v-flex>
+
+                        <v-flex xs12>
+                            <v-text-field
+                                    label="Tên nơi ban hành"
                                     v-model="formData.name"
                             ></v-text-field>
                         </v-flex>
+
                         <v-flex xs12>
-                            <v-label>Nội dung chi tiết</v-label>
-                            <ckeditor :editor="editor"
-                                      @ready="onEditorReady"
-                                      v-model="formData.template"
-                                      :config="editorConfig"
-                                      style="height: 500px"
-                            ></ckeditor>
+                            <v-textarea
+                                    label="Thông tin liên lạc"
+                                    v-model="formData.contactData"
+                            ></v-textarea>
                         </v-flex>
 
                     </v-layout>
@@ -59,46 +64,19 @@
 
 <script>
     import Axios from 'axios'
-    import DecoupledEditor from '@ckeditor/ckeditor5-build-decoupled-document';
-    import '@ckeditor/ckeditor5-build-decoupled-document/build/translations/vi'
 
     export default {
-        name: "DocumentTemplateForm",
+        name: "OutsiderForm",
         props: {
-            form: {
-                type: Object,
-                default() {
-                    return {
-                        id: null,
-                        name: null,
-                        template: null,
-                    }
-                }
-            },
+            id: Number,
             creating: Boolean,
         },
         data() {
             return {
+                formData: {name: null, code: null, contactData: null},
                 loaded: false,
                 loading: false,
                 dialog: false,
-                editor: DecoupledEditor,
-                editorData: '',
-                editorConfig: {
-                    language: 'vi',
-                    toolbar: [
-                        'heading', '|',
-                        'fontSize', 'fontFamily', '|',
-                        'bold', 'italic', 'underline', 'strikeThrough', 'highlight', '|',
-                        'alignment', '|',
-                        'bulletedList', 'numberedList', 'blockQuote', 'insertTable', '|',
-                        'undo', 'redo'],
-                },
-            }
-        },
-        computed: {
-            formData() {
-                return this.form;
             }
         },
         methods: {
@@ -108,8 +86,8 @@
             save() {
                 this.loading = true;
                 const url = this.creating ?
-                    `http://localhost:8080/templates` :
-                    `http://localhost:8080/templates/${this.formData.id}`;
+                    `http://localhost:8080/outsiders` :
+                    `http://localhost:8080/outsiders/${this.formData.id}`;
                 const method = this.creating ? 'POST' : 'PUT';
                 const data = this.formData;
                 Axios({url, method, data})
@@ -125,12 +103,16 @@
                         this.loading = false;
                     })
             },
-            onEditorReady(editor) {
-                editor.ui.view.editable.element.parentElement.insertBefore(
-                    editor.ui.view.toolbar.element,
-                    editor.ui.view.editable.element
-                );
-            },
+            getOutsiderDetail() {
+                Axios.get(`http://localhost:8080/outsiders/${this.id}`)
+                    .then(response => {
+                        this.formData = response.data;
+                    })
+                    .catch(error => {
+                        if (error.response)
+                            console.log(error.response);
+                    })
+            }
         },
         watch: {
             dialog(val) {
@@ -138,6 +120,11 @@
                     this.loaded = true;
                 }
             },
+            id(val) {
+                if (val) {
+                    this.getOutsiderDetail();
+                }
+            }
         }
     }
 </script>

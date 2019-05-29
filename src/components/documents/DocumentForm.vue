@@ -29,15 +29,7 @@
                             ></v-text-field>
                         </v-flex>
 
-                        <v-flex xs12>
-                            <v-textarea
-                                    label="Trích yếu"
-                                    v-model="formData.summary"
-                                    outline
-                            ></v-textarea>
-                        </v-flex>
-
-                        <v-flex md12 sm12>
+                        <v-flex xs12 sm8 md10>
                             <v-autocomplete
                                     v-model="formData.outsiderId"
                                     :items="outsiderOptions"
@@ -45,7 +37,7 @@
                                     :item-text="itemText"
                                     :loading="outsiderOptionsLoading"
                                     :search-input.sync="outsiderOptionsSearch"
-                                    label="Đối tượng ngoài"
+                                    label="Nơi ban hành"
                                     clearable
                                     hide-no-data
                                     cache-items
@@ -59,6 +51,33 @@
                             </v-autocomplete>
                         </v-flex>
 
+                        <v-flex xs12 sm4 md2 pl-2>
+                            <OutsiderForm creating @refresh="refreshOutsider">
+                                <template #activator="{on}">
+                                    <v-btn v-on="on" fab outline color="success"
+                                           title="Tạo mới nơi ban hành">
+                                        <v-icon>mdi-plus</v-icon>
+                                    </v-btn>
+                                </template>
+                            </OutsiderForm>
+                            <OutsiderForm :id="formData.outsiderId" @refresh="refreshOutsider">
+                                <template #activator="{on}">
+                                    <v-btn v-on="on" fab outline color="primary"
+                                           title="Chỉnh sửa nơi ban hành" :disabled="formData.outsiderId === null">
+                                        <v-icon>mdi-pencil</v-icon>
+                                    </v-btn>
+                                </template>
+                            </OutsiderForm>
+                        </v-flex>
+
+                        <v-flex xs12>
+                            <v-textarea
+                                    label="Trích yếu"
+                                    v-model="formData.summary"
+                                    outline
+                            ></v-textarea>
+                        </v-flex>
+
                         <v-flex xs12>
                             <v-textarea
                                     label="Thông tư/ Nghị định"
@@ -67,7 +86,7 @@
                             ></v-textarea>
                         </v-flex>
 
-                        <v-flex xs12 md8>
+                        <v-flex xs12 sm8 md10>
                             <v-select
                                     label="Bản mẫu"
                                     v-model="templateId"
@@ -83,19 +102,27 @@
 
                         </v-flex>
 
-                        <v-flex xs12 md4 pl-5 pt-2>
-                            <DocumentTemplateForm>
+                        <v-flex xs12 sm4 md2 pl-2>
+                            <DocumentTemplateForm creating @refresh="refreshTemplates">
                                 <template #activator="{on}">
-                                    <v-btn v-on="on" color="primary">
-                                        <v-icon left>add</v-icon>
-                                        Thêm bản mẫu
+                                    <v-btn v-on="on" fab outline color="success"
+                                           title="Tạo mới bản mẫu">
+                                        <v-icon>mdi-plus</v-icon>
+                                    </v-btn>
+                                </template>
+                            </DocumentTemplateForm>
+                            <DocumentTemplateForm :form="{...documentTemplate}" @refresh="refreshTemplates">
+                                <template #activator="{on}">
+                                    <v-btn v-on="on" fab outline color="primary"
+                                           title="Chỉnh sửa bản mẫu" :disabled="templateId === null">
+                                        <v-icon>mdi-pencil</v-icon>
                                     </v-btn>
                                 </template>
                             </DocumentTemplateForm>
                         </v-flex>
 
                         <v-flex xs12>
-                            <v-label>Chi tiết</v-label>
+                            <v-label>Nội dung chi tiết</v-label>
                             <ckeditor :editor="editor"
                                       @ready="onEditorReady"
                                       v-model="formData.detail"
@@ -228,13 +255,13 @@
             </v-card-text>
             <v-card-actions>
                 <v-layout row justify-space-around>
-                    <v-flex md2 xs6>
+                    <v-flex md3 xs6>
                         <v-btn color="secondary" @click="close" block>
                             <v-icon left>clear</v-icon>
                             Hủy
                         </v-btn>
                     </v-flex>
-                    <v-flex md2 xs6>
+                    <v-flex md3 xs6>
                         <v-btn color="primary" @click="save" block :loading="loading">
                             <v-icon left>done</v-icon>
                             Lưu
@@ -252,24 +279,25 @@
     import DecoupledEditor from '@ckeditor/ckeditor5-build-decoupled-document';
     import '@ckeditor/ckeditor5-build-decoupled-document/build/translations/vi'
     import DocumentTemplateForm from "./DocumentTemplateForm";
+    import OutsiderForm from "@/components/outsiders/OutsiderForm";
 
     export default {
         name: "DocumentForm",
-        components: {DocumentTemplateForm},
+        components: {OutsiderForm, DocumentTemplateForm},
         props: {
             form: {
                 type: Object,
                 default() {
                     return {
-                        code: '',
-                        title: '',
-                        summary: '',
-                        decree: '',
-                        detail: '',
-                        arrivalDate: '',
-                        effectiveDate: '',
-                        effectiveEndDate: '',
-                        outsiderId: 0,
+                        code: null,
+                        title: null,
+                        summary: null,
+                        decree: null,
+                        detail: null,
+                        arrivalDate: null,
+                        effectiveDate: null,
+                        effectiveEndDate: null,
+                        outsiderId: null,
                     }
                 }
             },
@@ -283,7 +311,6 @@
                 arrivalDateMenu: false,
                 effectiveDateMenu: false,
                 effectiveEndDateMenu: false,
-                formData: this.form,
                 outsiderOptions: [],
                 outsiderOptionsLoading: false,
                 outsiderOptionsSearch: null,
@@ -299,9 +326,15 @@
                         'bulletedList', 'numberedList', 'blockQuote', 'insertTable', '|',
                         'undo', 'redo'],
                 },
-                templateId: 0,
+                templateId: null,
+                documentTemplate: null,
                 templateOptions: [],
                 templateOptionsLoading: false,
+            }
+        },
+        computed: {
+            formData() {
+                return this.form;
             }
         },
         methods: {
@@ -328,6 +361,7 @@
                     });
             },
             getOutsiderOptions(searchValue) {
+                console.log(searchValue)
                 this.outsiderOptionsLoading = true;
                 Axios.get(`http://localhost:8080/outsiders/search/findAllSummaryByNameContainsOrCodeContains`, {
                     params: {
@@ -346,6 +380,11 @@
                     .finally(() => {
                         this.outsiderOptionsLoading = false;
                     })
+            },
+            refreshOutsider(id) {
+                console.log('refresh');
+                this.getOutsiderOptions();
+                this.formData.outsiderId = id;
             },
             onEditorReady(editor) {
                 // Insert the toolbar before the editable area.
@@ -375,12 +414,18 @@
                 console.log('get template detail');
                 Axios.get(`http://localhost:8080/templates/${this.templateId}`)
                     .then(response => {
-                        this.formData.detail = response.data.template;
+                        this.documentTemplate = response.data;
+                        this.formData.detail = this.documentTemplate.template;
                     })
                     .catch(error => {
                         if (error.response)
                             console.log(error.response);
                     })
+            },
+            refreshTemplates(id) {
+                this.getTemplateOptions();
+                this.templateId = id;
+                this.getTemplateDetail();
             }
         },
         watch: {

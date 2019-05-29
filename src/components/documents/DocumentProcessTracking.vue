@@ -65,6 +65,8 @@
 </template>
 
 <script>
+    import Axios from 'axios'
+
     export default {
         name: "DocumentProcessTracking",
         props: {
@@ -82,60 +84,63 @@
         computed: {},
         methods: {
             getProcess() {
+                Axios.get(`http://localhost:8080/document_processes/${this.document.process.id}`)
+                    .then(response => {
+                        const process = response.data;
+                        const firstStep = process.steps.find(el => el.id === process.firstStep.id);
+                        this.process.steps.push(firstStep);
 
-                const process = {
-                    firstStep: {
-                        id: 1,
-                        name: 'Bước xử lý 1',
-                    },
-                    steps: [
-                        {
-                            id: 1, name: 'Bước xử lý 1', outcomes: [{
-                                nextStep: {
-                                    id: 2
-                                },
-                                lastStep: false,
-                                main: true,
-                            }]
-                        },
-                        {
-                            id: 2, name: 'Bước xử lý 2', outcomes: [{
-                                nextStep: {
-                                    id: 3
-                                },
-                                lastStep: false,
-                                main: true,
-                            }]
-                        },
-                        {
-                            id: 3, name: 'Bước xử lý 3', outcomes: [{
-                                nextStep: {
-                                    id: 1
-                                },
-                                lastStep: false,
-                                main: false,
-                            }, {
-                                lastStep: true,
-                                main: true,
-                            }]
-                        },
-                    ]
-                };
-                this.process.steps.push(process.firstStep);
-
-                for (const step of process.steps) {
-                    if (this.document.currentStep.id === step.id) {
-                        this.currentIndex = this.process.steps.length - 1;
-                    }
-                    for (const outcome of step.outcomes) {
-                        if (outcome.main && !outcome.lastStep) {
-                            const nextMainStep = process.steps.find(el => el.id === outcome.nextStep.id);
-                            this.process.steps.push(nextMainStep);
+                        for (const step of process.steps) {
+                            if (this.document.currentStep.id === step.id) {
+                                this.currentIndex = this.process.steps.length - 1;
+                            }
+                            for (const outcome of step.outcomes) {
+                                if (outcome.main && !outcome.lastStep) {
+                                    const nextMainStep = process.steps.find(el => el.id === outcome.nextStep.id);
+                                    this.process.steps.push(nextMainStep);
+                                }
+                            }
                         }
-                    }
-                }
-                this.loaded = true;
-                console.log(this.process.steps)
+                        this.loaded = true;
+                    });
+                // const process = {
+                //     firstStep: {
+                //         id: 1,
+                //     },
+                //     steps: [
+                //         {
+                //             id: 1, name: 'Bước xử lý 1', outcomes: [{
+                //                 nextStep: {
+                //                     id: 2
+                //                 },
+                //                 lastStep: false,
+                //                 main: true,
+                //             }]
+                //         },
+                //         {
+                //             id: 2, name: 'Bước xử lý 2', outcomes: [{
+                //                 nextStep: {
+                //                     id: 3
+                //                 },
+                //                 lastStep: false,
+                //                 main: true,
+                //             }]
+                //         },
+                //         {
+                //             id: 3, name: 'Bước xử lý 3', outcomes: [{
+                //                 nextStep: {
+                //                     id: 1
+                //                 },
+                //                 lastStep: false,
+                //                 main: false,
+                //             }, {
+                //                 lastStep: true,
+                //                 main: true,
+                //             }]
+                //         },
+                //     ]
+                // };
+
             }
         },
         mounted() {

@@ -55,8 +55,13 @@
             </v-list>
         </v-navigation-drawer>
         <v-toolbar dark fixed app color="primary">
-            <v-toolbar-side-icon @click.stop="drawer = !drawer"></v-toolbar-side-icon>
-            <v-toolbar-title>{{title}}</v-toolbar-title>
+            <v-toolbar-side-icon @click.stop="drawer = !drawer" title="Ẩn/Hiện thanh điều hướng"></v-toolbar-side-icon>
+            <v-btn icon title="Quay lại trang" @click="$router.back()">
+                <v-icon>mdi-arrow-left</v-icon>
+            </v-btn>
+            <v-toolbar-title>
+                {{title}}
+            </v-toolbar-title>
             <v-spacer/>
             <span>{{username}}&nbsp; &nbsp; &nbsp;</span>
             <v-btn icon @click="logout">
