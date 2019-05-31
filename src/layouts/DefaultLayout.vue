@@ -36,7 +36,7 @@
                         <v-list-tile-title>Quản lý văn bản</v-list-tile-title>
                     </v-list-tile-content>
                 </v-list-tile>
-                <v-list-tile to="/processes">
+                <v-list-tile to="/processes" v-if="isAdmin">
                     <v-list-tile-action>
                         <v-icon>timeline</v-icon>
                     </v-list-tile-action>
@@ -44,7 +44,7 @@
                         <v-list-tile-title>Quản lý quy trình</v-list-tile-title>
                     </v-list-tile-content>
                 </v-list-tile>
-                <v-list-tile to="/processes_creating">
+                <v-list-tile to="/processes_creating" v-if="isAdmin">
                     <v-list-tile-action>
                         <v-icon>timeline</v-icon>
                     </v-list-tile-action>
@@ -104,6 +104,7 @@
         computed: {
             ...mapGetters('AUTHENTICATION_STORE', {
                 username: 'username',
+                isAdmin: 'isAdmin'
             }),
         },
     }

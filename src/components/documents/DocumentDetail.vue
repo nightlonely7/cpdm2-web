@@ -41,7 +41,7 @@
                     <td>Thời gian tạo</td>
                     <td>{{document.createdTime}}</td>
                 </tr>
-                <tr>
+                <tr v-if="isAdmin">
                     <td>Quá trình xử lý</td>
                     <td>
                         <DocumentProcessTracking :document="{...document}"></DocumentProcessTracking>
@@ -64,7 +64,7 @@
 
             </v-card>
 
-            <template v-if="!document.startedProcessing">
+            <template v-if="!document.startedProcessing && isAdmin">
                 <DocumentPutIntoProcessForm :id="id" @refresh="getDocumentDetail">
                     <template #activator="{on}">
                         <v-btn v-on="on" color="primary">
@@ -112,7 +112,8 @@
         },
         computed: {
             ...mapGetters('AUTHENTICATION_STORE', {
-                username: 'username'
+                username: 'username',
+                isAdmin: 'isAdmin'
             })
         },
         methods: {

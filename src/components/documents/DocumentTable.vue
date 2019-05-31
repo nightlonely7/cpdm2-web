@@ -27,7 +27,7 @@
                 Tải lại
             </v-btn>
             <v-spacer></v-spacer>
-            <DocumentForm @refresh="refresh" creating>
+            <DocumentForm @refresh="refresh" creating v-if="isAdmin">
                 <template #activator="{on}">
                     <v-btn v-on="on" color="primary">
                         <v-icon left>add</v-icon>
@@ -68,6 +68,7 @@
 <script>
     import Axios from 'axios'
     import DocumentForm from "@/components/documents/DocumentForm";
+    import {mapGetters} from "vuex";
 
     export default {
         name: "DocumentTable",
@@ -90,6 +91,11 @@
                     descending: true
                 },
             }
+        },
+        computed: {
+            ...mapGetters('AUTHENTICATION_STORE', {
+                isAdmin: 'isAdmin'
+            })
         },
         methods: {
             refresh() {
