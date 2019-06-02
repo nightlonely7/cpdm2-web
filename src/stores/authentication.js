@@ -48,6 +48,7 @@ export default {
                         const token = response.data.token;
                         localStorage.setItem('cpdm_token', token);
                         commit('SUCCESS', token);
+                        console.log('login success');
                         resolve(response);
                     })
                     .catch(error => {
@@ -87,7 +88,7 @@ export default {
                 axios({url: 'http://localhost:8080/self', method: 'GET'})
                     .then(response => {
                         const username = response.data.username;
-                        const role = response.data.role.replace('ROLE_', '');
+                        const role = response.data.role.name.replace('ROLE_', '');
                         console.log(username, role);
                         commit('INIT', {username, role});
                         //

@@ -45,12 +45,20 @@ const router = new Router({
 })
 
 router.beforeEach((to, from, next) => {
-
+    console.log('aaa');
     if (to.path === '/login') {
         if (store.getters['AUTHENTICATION_STORE/isLoggedIn']) {
             store.dispatch('AUTHENTICATION_STORE/INIT')
                 .then(() => next('/documents'))
-                .catch(() => next('/login'));
+                .catch(error => {
+                        if (error.response) {
+                            console.log(error.response.data)
+                        } else {
+                            console.log(error)
+                        }
+                        next('/login')
+                    }
+                );
             return;
         }
         next();

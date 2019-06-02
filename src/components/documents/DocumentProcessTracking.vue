@@ -102,45 +102,14 @@
                             }
                         }
                         this.loaded = true;
-                    });
-                // const process = {
-                //     firstStep: {
-                //         id: 1,
-                //     },
-                //     steps: [
-                //         {
-                //             id: 1, name: 'Bước xử lý 1', outcomes: [{
-                //                 nextStep: {
-                //                     id: 2
-                //                 },
-                //                 lastStep: false,
-                //                 main: true,
-                //             }]
-                //         },
-                //         {
-                //             id: 2, name: 'Bước xử lý 2', outcomes: [{
-                //                 nextStep: {
-                //                     id: 3
-                //                 },
-                //                 lastStep: false,
-                //                 main: true,
-                //             }]
-                //         },
-                //         {
-                //             id: 3, name: 'Bước xử lý 3', outcomes: [{
-                //                 nextStep: {
-                //                     id: 1
-                //                 },
-                //                 lastStep: false,
-                //                 main: false,
-                //             }, {
-                //                 lastStep: true,
-                //                 main: true,
-                //             }]
-                //         },
-                //     ]
-                // };
-
+                    })
+                    .catch(error => {
+                        if (error.response) {
+                            console.log(error.response.data)
+                        } else {
+                            console.log(error)
+                        }
+                    })
             }
         },
         mounted() {
