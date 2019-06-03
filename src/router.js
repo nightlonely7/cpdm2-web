@@ -40,7 +40,12 @@ const router = new Router({
             path: '/processes_creating',
             name: 'processes_creating',
             component: () => import('@/views/ProcessCreatingPage.vue')
-        }
+        },
+        {
+            path: '/departments',
+            name: 'departments',
+            component: () => import('@/views/DepartmentPage.vue')
+        },
     ]
 })
 

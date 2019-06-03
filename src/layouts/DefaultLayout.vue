@@ -28,6 +28,14 @@
                         <v-list-tile-title>About</v-list-tile-title>
                     </v-list-tile-content>
                 </v-list-tile>
+                <v-list-tile to="/departments">
+                    <v-list-tile-action>
+                        <v-icon>mdi-home</v-icon>
+                    </v-list-tile-action>
+                    <v-list-tile-content>
+                        <v-list-tile-title>Quản lý phòng ban</v-list-tile-title>
+                    </v-list-tile-content>
+                </v-list-tile>
                 <v-list-tile to="/documents">
                     <v-list-tile-action>
                         <v-icon>mdi-home</v-icon>
