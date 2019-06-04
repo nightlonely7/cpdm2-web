@@ -8,10 +8,11 @@ import '@mdi/font/css/materialdesignicons.css'
 import 'material-design-icons-iconfont/dist/material-design-icons.css'
 import axios from 'axios'
 import moment from 'moment'
-
+import Notifications from 'vue-notification';
 import CKEditor from '@ckeditor/ckeditor5-vue';
 
 Vue.use(CKEditor);
+Vue.use(Notifications);
 
 Vue.use(Vuetify, {
     iconfont: 'mdi'

@@ -64,6 +64,7 @@
 
 <script>
     import Axios from 'axios';
+
     export default {
         name: "DepartmentForm",
         props: {
@@ -78,12 +79,16 @@
                 dialog: false,
             }
         },
+        mounted(){
+          this.$nextTick(() => {
+              this.getDepartmentDetail();
+          })
+        },
         methods: {
             close() {
                 this.dialog = false;
             },
             save() {
-                console.log(this.formData);
                 this.loading = true;
                 const url = this.creating ?
                     `http://localhost:8080/departments` :
@@ -94,10 +99,11 @@
                     .then(response => {
                         this.close();
                         this.$emit('refresh', response.data.id);
+                        this.$emit('popup',true);
                     })
                     .catch(error => {
-                        if (error.response)
-                            console.log(error.response);
+                        console.log(error);
+                        this.$emit('popup',error);
                     })
                     .finally(() => {
                         this.loading = false;
@@ -118,11 +124,6 @@
             dialog(val) {
                 if (val && !this.loaded) {
                     this.loaded = true;
-                }
-            },
-            id(val) {
-                if (val) {
-                    this.getDepartmentDetail();
                 }
             }
         }

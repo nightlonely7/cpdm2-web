@@ -262,10 +262,10 @@
                     for (var i = 0; i < diff; i++) {
                         this.newStep.name = `Bước ${this.steps.length + 1}`;
                         this.newStep.temporaryId = this.steps.length + 1;
-                        var copy = Object.assign({}, this.newStep);
-                        this.steps.push(copy);
-                        Object.assign(this.newStep, this.defaultStep);
+                        this.newStep.outcomes = [];
+                        this.steps.push(Object.assign({}, this.newStep));
                     }
+                    Object.assign(this.newStep, this.defaultStep);
                 } else if (diff < 0) {
                     diff = 0 - diff;
                     for (var i = 0; i < diff; i++) {
@@ -275,15 +275,11 @@
                 this.el = 1;
             },
             save(step) {
-                // if(this.$refs.form.validate()){
-                var copy = Object.assign({}, this.newOutcome);
-                step.outcomes.push(copy);
+                step.outcomes.push(Object.assign({}, this.newOutcome));
                 Object.assign(this.newOutcome, this.defaultOutcome);
                 this.dialog = false;
-                // }
             },
             setDialog(temporaryId) {
-                // this.$refs.form.reset();
                 Object.assign(this.tmpSteps, []);
                 for (var i = 0; i < temporaryId - 1; i++) {
                     this.tmpSteps.push(this.steps[i]);
@@ -291,27 +287,25 @@
             },
             finish() {
                 this.loading = true;
+                console.log(this.steps[this.steps.length-1].outcomes.length);
                 //Add default outcome for each step
                 for (var i = 0; i < (this.steps.length - 1); i++) {
                     this.newOutcome.name = `Kết quả đúng cho bước ${this.steps[i].name}`;
                     this.newOutcome.description = `Mô tả ết quả đúng cho bước ${this.steps[i].name}`;
                     this.newOutcome.nextStepTemporaryId = this.steps[i + 1].temporaryId;
                     this.newOutcome.lastStep = false;
-                    var copy = Object.assign({}, this.newOutcome);
-                    console.log(copy);
-                    this.steps[i].outcomes.push(copy);
+                    this.steps[i].outcomes.push(Object.assign({}, this.newOutcome));
                     Object.assign(this.newOutcome, this.defaultOutcome);
                 }
+                console.log(this.steps[this.steps.length-1].outcomes.length);
                 this.newOutcome.name = `Kết quả đúng cho bước ${this.steps[this.steps.length - 1].name}`;
                 this.newOutcome.description = `Mô tả ết quả đúng cho bước ${this.steps[this.steps.length - 1].name}`;
                 this.newOutcome.nextStepTemporaryId = null;
                 this.newOutcome.lastStep = true;
-                var copy = Object.assign({}, this.newOutcome);
-                this.steps[this.steps.length - 1].outcomes.push(copy);
+                this.steps[this.steps.length - 1].outcomes.push(Object.assign({}, this.newOutcome));
                 Object.assign(this.newOutcome, this.defaultOutcome);
                 //Add steps to process
                 this.process.steps = this.steps;
-                console.log(this.process);
                 Axios.post(`http://localhost:8080/document_processes`, this.process).then(response => {
                     console.log('success');
                     this.steps = [];

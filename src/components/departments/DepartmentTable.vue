@@ -11,7 +11,7 @@
                 Tải lại
             </v-btn>
             <v-spacer></v-spacer>
-            <DepartmentForm @refresh="refresh" creating>
+            <DepartmentForm @refresh="refresh" @popup="popup" creating>
                 <template #activator="{on}">
                     <v-btn v-on="on" color="primary">
                         <v-icon left>add</v-icon>
@@ -41,16 +41,50 @@
                 <td class="text-xs-left">{{item.code}}</td>
                 <td class="text-xs-left">{{item.name}}</td>
                 <td class="text-xs-left">{{item.description}}</td>
-                <td class="text-xs-left">{{item.available}}</td>
+                <td class="text-xs-left">
+                    <v-chip color="success" v-if="item.available">
+                        Đang hoạt động
+                    </v-chip>
+                    <v-chip color="error" v-if="!item.available">
+                        Ngưng hoạt động
+                    </v-chip>
+                </td>
+                <td class="text-xs-left">
+                    <DepartmentForm @refresh="refresh" @popup="popup" :id="item.id">
+                        <template #activator="{on}">
+                            <v-btn outline flat fab small v-on="on" color="primary">
+                                <v-icon>edit</v-icon>
+                            </v-btn>
+                        </template>
+                    </DepartmentForm>
+                    <v-btn outline flat fab small @click="deactive(item.id)" color="error" v-if="item.available">
+                        <v-icon>delete</v-icon>
+                    </v-btn>
+                    <v-btn outline flat fab small @click="active(item.id)" color="success" v-if="!item.available">
+                        <v-icon>check</v-icon>
+                    </v-btn>
+                </td>
             </template>
-
         </v-data-table>
+
+        <!--Snack bar-->
+        <v-snackbar v-model="snackbar" right>
+            {{snackbarText}}
+            <v-btn
+                    color="pink"
+                    flat
+                    @click="snackbar = false"
+            >
+                Close
+            </v-btn>
+        </v-snackbar>
     </div>
 </template>
 
 <script>
     import Axios from 'axios';
     import DepartmentForm from "./DepartmentForm";
+
     export default {
         name: "DepartmentTable",
         components: {DepartmentForm},
@@ -63,16 +97,31 @@
                     {text: 'Tên phòng ban', value: 'name'},
                     {text: 'Mô tả', value: 'description'},
                     {text: 'Trạng thái', value: 'available'},
+                    {text: 'Thao tác', sortable: false},
                 ],
                 pagination: {
                     sortBy: 'available',
                     descending: true
                 },
+                snackbar: false,
+                snackbarText: null,
             }
         },
         methods: {
             refresh() {
                 this.getDepartments();
+            },
+            popup(data){
+              if(data === true){
+                  this.snackbarText = "Thành công";
+                  this.snackbar = true;
+              } else{
+                  this.snackbarText = "Thất bại";
+                  if(data.response.data.message){
+                      this.snackbarText = data.response.data.message;
+                  }
+                  this.snackbar = true;
+              }
             },
             getDepartments() {
                 this.loading = true;
@@ -84,6 +133,54 @@
                     .finally(() => {
                         this.loading = false;
                     })
+            },
+            deactive(id) {
+                if (confirm("Bạn muốn ngưng hoạt động phòng ban này?")) {
+                    this.loading = true;
+                    Axios.put(`http://localhost:8080/departments/${id}`,{
+                        available: false
+                    })
+                        .then(response => {
+                            this.getDepartments();
+                            this.snackbarText = "Thành công";
+                            this.snackbar = true;
+                        })
+                        .catch(error => {
+                            console.log(error);
+                            this.snackbarText = "Thất bại";
+                            if(error.response.data.message){
+                                this.snackbarText = error.response.data.message;
+                            }
+                            this.snackbar = true;
+                        })
+                        .finally(() => {
+                            this.loading = false;
+                        })
+                }
+            },
+            active(id){
+                if (confirm("Bạn muốn tái hoạt động phòng ban này?")) {
+                    this.loading = true;
+                    Axios.put(`http://localhost:8080/departments/${id}`,{
+                        available: true
+                    })
+                        .then(response => {
+                            this.getDepartments();
+                            this.snackbarText = "Thành công";
+                            this.snackbar = true;
+                        })
+                        .catch(error => {
+                            console.log(error);
+                            this.snackbarText = "Thất bại";
+                            if(error.response.data.message){
+                                this.snackbarText = error.response.data.message;
+                            }
+                            this.snackbar = true;
+                        })
+                        .finally(() => {
+                            this.loading = false;
+                        })
+                }
             }
         },
         watch: {
