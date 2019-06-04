@@ -104,8 +104,8 @@
             getDocuments() {
                 this.loading = true;
                 const url = this.executing ?
-                    `http://localhost:8080/documents/executing` :
-                    `http://localhost:8080/documents/creates`;
+                    `http://localhost:8080/documents/search/executing` :
+                    `http://localhost:8080/documents/search/creates`;
                 Axios.get(url)
                     .then(response => {
                         this.documents = response.data.content;
