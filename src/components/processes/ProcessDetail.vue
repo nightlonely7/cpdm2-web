@@ -7,9 +7,6 @@
             </v-toolbar-title>
             <v-divider class="mx-2" inset vertical></v-divider>
             <v-spacer/>
-            <v-btn color="primary" to="/processes">
-                <v-icon dark>arrow_back</v-icon>
-            </v-btn>
         </v-toolbar>
         <v-card class="mb-3">
             <v-card-text>
@@ -36,88 +33,26 @@
                     </v-stepper-step>
 
                     <v-stepper-content :step="step.id">
-                        <v-select
-                                v-model="step.executorId"
-                                :items="executors"
-                                item-text="username"
-                                item-value="id"
-                                box
-                                label="Chọn nhân viên phụ trách"
-                        ></v-select>
+                        <v-text-field
+                                    v-model="step.executor.username"
+                                    label="Người phụ trách"
+                                    readonly>
+                        </v-text-field>
                         <v-textarea class="mb-5"
                                     label="Mô tả"
                                     v-model="step.description"
                                     readonly
                         ></v-textarea>
                         <v-btn color="success"
-                               @click="(step.id)"
+                               @click="nextStep(step.id)"
                         >
                             <v-icon>navigate_next</v-icon>
                             Bước tiếp theo
                         </v-btn>
-                        <v-dialog v-model="dialog" persistent transition="dialog-bottom-transition" lazy
-                                  max-width="600">
-                            <template #activator="{on}">
-                                <slot name="activator" :on="on"></slot>
-                                <v-btn v-on="on" color="primary" @click="setDialog(step.id)"
-                                       v-if="step.id > 1">
-                                    <v-icon left>add</v-icon>
-                                    Thêm bước vòng
-                                </v-btn>
-                            </template>
-                            <v-card>
-                                <v-toolbar dark color="primary">
-                                    <v-btn icon @click="dialog = false">
-                                        <v-icon>close</v-icon>
-                                    </v-btn>
-                                    <v-toolbar-title>Thêm bước vòng</v-toolbar-title>
-                                </v-toolbar>
-                                <v-card-text>
-                                    <v-container>
-                                        <v-form ref="form"
-                                                v-model="valid"
-                                                lazy-validation
-                                        >
-                                            <v-layout wrap>
-                                                <v-flex xs12>
-                                                    <v-text-field
-                                                            label="Tên bước vòng"
-                                                            v-model="newOutcome.name"
-                                                            :rules="[rules.required,rules.length(50)]"
-                                                    ></v-text-field>
-                                                </v-flex>
-                                                <v-flex xs12>
-                                                    <v-textarea class="mb-5"
-                                                                label="Mô tả"
-                                                                v-model="newOutcome.description"
-                                                                counter="255"
-                                                                :rules="[rules.required, rules.length(255)]"
-                                                    ></v-textarea>
-                                                </v-flex>
-                                                <v-flex xs12>
-                                                    <v-select
-                                                            v-model="newOutcome.nextStepId"
-                                                            :items="tmpSteps"
-                                                            item-text="name"
-                                                            item-value="id"
-                                                            box
-                                                            label="Chọn bước"
-                                                    ></v-select>
-                                                </v-flex>
-                                            </v-layout>
-                                        </v-form>
-                                    </v-container>
-                                </v-card-text>
-                                <v-card-actions>
-                                    <v-spacer></v-spacer>
-                                    <v-btn color="blue darken-1" flat @click="dialog = false">Đóng</v-btn>
-                                    <v-btn color="blue darken-1" flat @click="save(step)">Lưu</v-btn>
-                                </v-card-actions>
-                            </v-card>
-                        </v-dialog>
                         <template v-for="outcome in step.outcomes">
                             <v-btn color="error"
-                                   @click="goToStep(outcome.nextStepId)"
+                                   @click="goToStep(outcome.nextStep.id)"
+                                   v-if="!outcome.main"
                             >
                                 <v-icon>navigate_next</v-icon>
                                 {{outcome.name}}
@@ -126,31 +61,39 @@
                     </v-stepper-content>
                 </template>
             </v-stepper>
-            <v-card-actions>
-                <v-spacer></v-spacer>
-                <v-btn color="success" @click="finish">LƯU</v-btn>
-            </v-card-actions>
         </v-card>
-
-        <!--Snack bar-->
-        <v-snackbar v-model="snackbar" right>
-            {{snackbarText}}
-            <v-btn
-                    color="pink"
-                    flat
-                    @click="snackbar = false"
-            >
-                Close
-            </v-btn>
-        </v-snackbar>
     </div>
 </template>
 
 <script>
+    import Axios from 'axios';
+
     export default {
         name: "ProcessDetail",
-        props:{
+        props: {
             id: Number,
+        },
+        data() {
+            return {
+                loading: false,
+                el: 0,
+                process: {
+                    name: null,
+                    description: null,
+                    firstStepTemporaryId: 1,
+                    steps: []
+                },
+                steps: [],
+                maps: [],
+                newMap: {
+                    position: null,
+                    id: null,
+                },
+                defaultMap: {
+                    position: null,
+                    id: null,
+                }
+            }
         },
         mounted() {
             this.$nextTick(() => {
@@ -158,9 +101,49 @@
             })
         },
         methods: {
-            getProcessDetail(){
-
-            }
+            getProcessDetail() {
+                this.loading = true;
+                Axios.get(`http://localhost:8080/document_processes/${this.id}`)
+                    .then(response => {
+                        this.process = response.data;
+                        Object.assign(this.steps, this.process.steps);
+                        for (var i = 1; i <= this.steps.length; i++) {
+                            this.newMap.position = i;
+                            this.newMap.id = this.steps[i-1].id;
+                            this.maps.push(Object.assign({}, this.newMap));
+                        }
+                        Object.assign(this.newMap, this.defaultMap);
+                        for (var i = 1; i <= this.steps.length; i++) {
+                            this.steps[i-1].id = i;
+                            this.steps[i-1].outcomes.pop();
+                            var outcomes = this.steps[i-1].outcomes;
+                            for (var j in outcomes) {
+                                console.log(outcomes[j]);
+                                if (outcomes[j].lastStep !== true) {
+                                    this.maps.forEach(value => {
+                                        if (outcomes[j].nextStep.id === value.id) {
+                                            outcomes[j].nextStep.id = value.position;
+                                        }
+                                    });
+                                }
+                            }
+                        }
+                    })
+                    .catch(console.error)
+                    .finally(() => {
+                        this.loading = false;
+                    })
+            },
+            nextStep(temporaryId) {
+                if (temporaryId >= this.steps.length) {
+                    this.el = 1;
+                } else {
+                    this.el = temporaryId + 1;
+                }
+            },
+            goToStep(nextStepTemporaryId) {
+                this.el = nextStepTemporaryId;
+            },
         }
     }
 </script>

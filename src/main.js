@@ -10,9 +10,11 @@ import axios from 'axios'
 import moment from 'moment'
 import Notifications from 'vue-notification';
 import CKEditor from '@ckeditor/ckeditor5-vue';
+import Truncate from 'vue-truncate-filter';
 
 Vue.use(CKEditor);
 Vue.use(Notifications);
+Vue.use(Truncate);
 
 Vue.use(Vuetify, {
     iconfont: 'mdi'

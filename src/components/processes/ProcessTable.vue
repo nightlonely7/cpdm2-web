@@ -12,7 +12,7 @@
             </v-btn>
             <v-spacer></v-spacer>
             <router-link to="/processes_creating">
-                <v-btn v-on="on" color="primary">
+                <v-btn color="primary">
                     <v-icon left>add</v-icon>
                     Tạo mới quy trình
                 </v-btn>
@@ -36,9 +36,14 @@
             </template>
 
             <template #items="{item}">
-                <td class="text-xs-left">{{item.name}}</td>
-                <td class="text-xs-left">{{item.description}}</td>
-                <td class="text-xs-left">{{moment(item.createdTime).format('HH:mm:ss DD-MM-YYYY')}}</td>
+                    <td class="text-xs-left">{{item.name}}</td>
+                    <td class="text-xs-left">{{item.description | truncate(30)}}</td>
+                    <td class="text-xs-left">{{moment(item.createdTime).format('DD-MM-YYYY')}}</td>
+                    <td>
+                        <v-btn outline flat fab small color="indigo" @click="$router.push(`/processes/${item.id}`)">
+                            <v-icon>info</v-icon>
+                        </v-btn>
+                    </td>
             </template>
 
         </v-data-table>
@@ -58,6 +63,7 @@
                     {text: 'Tên quy trình', value: 'name'},
                     {text: 'Mô tả', value: 'description'},
                     {text: 'Thời gian tạo', value: 'createdTime'},
+                    {text: 'Thao tác', sortable: false},
                 ],
                 pagination: {
                     sortBy: 'createdTime',

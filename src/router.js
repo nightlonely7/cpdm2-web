@@ -38,8 +38,13 @@ const router = new Router({
         },
         {
             path: '/processes_creating',
-            name: 'processes_creating',
+            name: 'processes creating',
             component: () => import('@/views/ProcessCreatingPage.vue')
+        },
+        {
+            path: '/processes/:id',
+            name: 'processes detail',
+            component: () => import('@/views/ProcessDetailPage.vue')
         },
         {
             path: '/departments',

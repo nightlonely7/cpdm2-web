@@ -5,10 +5,6 @@
                 <v-icon left>timeline</v-icon>
                 TẠO MỚI QUY TRÌNH
             </v-toolbar-title>
-            <v-spacer/>
-            <v-btn to="/processes" color="primary">
-                <v-icon dark>arrow_back</v-icon>
-            </v-btn>
             <v-divider class="mx-2" inset vertical></v-divider>
         </v-toolbar>
         <v-card class="mb-3">
@@ -83,66 +79,73 @@
                             <v-icon>navigate_next</v-icon>
                             Bước tiếp theo
                         </v-btn>
-                        <v-dialog v-model="dialog" persistent transition="dialog-bottom-transition" lazy
-                                  max-width="600">
+<!--                        <v-dialog v-model="dialog" persistent transition="dialog-bottom-transition" lazy-->
+<!--                                  max-width="600">-->
+<!--                            <template #activator="{on}">-->
+<!--                                <slot name="activator" :on="on"></slot>-->
+<!--                                <v-btn v-on="on" color="primary" @click="setDialog(step.temporaryId)"-->
+<!--                                       v-if="step.temporaryId > 1">-->
+<!--                                    <v-icon left>add</v-icon>-->
+<!--                                    Thêm bước vòng-->
+<!--                                </v-btn>-->
+<!--                            </template>-->
+<!--                            <v-card>-->
+<!--                                <v-toolbar dark color="primary">-->
+<!--                                    <v-btn icon @click="dialog = false">-->
+<!--                                        <v-icon>close</v-icon>-->
+<!--                                    </v-btn>-->
+<!--                                    <v-toolbar-title>Thêm bước vòng</v-toolbar-title>-->
+<!--                                </v-toolbar>-->
+<!--                                <v-card-text>-->
+<!--                                    <v-container>-->
+<!--                                        <v-layout wrap>-->
+<!--                                                <v-flex xs12>-->
+<!--                                                    <v-text-field-->
+<!--                                                            :key="`${step.temporaryId}_name`"-->
+<!--                                                            label="Tên bước vòng"-->
+<!--                                                            v-model="newOutcome.name"-->
+<!--                                                            :rules="[rules.required,rules.length(50)]"-->
+<!--                                                    ></v-text-field>-->
+<!--                                                </v-flex>-->
+<!--                                                <v-flex xs12>-->
+<!--                                                    <v-textarea-->
+<!--                                                                class="mb-5"-->
+<!--                                                                label="Mô tả"-->
+<!--                                                                v-model="newOutcome.description"-->
+<!--                                                                counter="255"-->
+<!--                                                                :rules="[rules.required, rules.length(255)]"-->
+<!--                                                    ></v-textarea>-->
+<!--                                                </v-flex>-->
+<!--                                                <v-flex xs12>-->
+<!--                                                    <v-select-->
+<!--                                                            v-model="newOutcome.nextStepTemporaryId"-->
+<!--                                                            :items="tmpSteps"-->
+<!--                                                            item-text="name"-->
+<!--                                                            item-value="temporaryId"-->
+<!--                                                            box-->
+<!--                                                            label="Chọn bước"-->
+<!--                                                            :rules="[rules.required]"-->
+<!--                                                    ></v-select>-->
+<!--                                                </v-flex>-->
+<!--                                            </v-layout>-->
+<!--                                    </v-container>-->
+<!--                                </v-card-text>-->
+<!--                                <v-card-actions>-->
+<!--                                    <v-spacer></v-spacer>-->
+<!--                                    <v-btn color="blue darken-1" flat @click="close">Đóng</v-btn>-->
+<!--                                    <v-btn color="blue darken-1" flat @click="save">Lưu</v-btn>-->
+<!--                                </v-card-actions>-->
+<!--                            </v-card>-->
+<!--                        </v-dialog>-->
+                        <OutcomeForm :step="step" :tmpSteps="tmpSteps">
                             <template #activator="{on}">
-                                <slot name="activator" :on="on"></slot>
                                 <v-btn v-on="on" color="primary" @click="setDialog(step.temporaryId)"
                                        v-if="step.temporaryId > 1">
                                     <v-icon left>add</v-icon>
                                     Thêm bước vòng
                                 </v-btn>
                             </template>
-                            <v-card>
-                                <v-toolbar dark color="primary">
-                                    <v-btn icon @click="dialog = false">
-                                        <v-icon>close</v-icon>
-                                    </v-btn>
-                                    <v-toolbar-title>Thêm bước vòng</v-toolbar-title>
-                                </v-toolbar>
-                                <v-card-text>
-                                    <v-container>
-                                        <v-form ref="form"
-                                                v-model="valid"
-                                                lazy-validation
-                                        >
-                                            <v-layout wrap>
-                                                <v-flex xs12>
-                                                    <v-text-field
-                                                            label="Tên bước vòng"
-                                                            v-model="newOutcome.name"
-                                                            :rules="[rules.required,rules.length(50)]"
-                                                    ></v-text-field>
-                                                </v-flex>
-                                                <v-flex xs12>
-                                                    <v-textarea class="mb-5"
-                                                                label="Mô tả"
-                                                                v-model="newOutcome.description"
-                                                                counter="255"
-                                                                :rules="[rules.required, rules.length(255)]"
-                                                    ></v-textarea>
-                                                </v-flex>
-                                                <v-flex xs12>
-                                                    <v-select
-                                                            v-model="newOutcome.nextStepTemporaryId"
-                                                            :items="tmpSteps"
-                                                            item-text="name"
-                                                            item-value="temporaryId"
-                                                            box
-                                                            label="Chọn bước"
-                                                    ></v-select>
-                                                </v-flex>
-                                            </v-layout>
-                                        </v-form>
-                                    </v-container>
-                                </v-card-text>
-                                <v-card-actions>
-                                    <v-spacer></v-spacer>
-                                    <v-btn color="blue darken-1" flat @click="dialog = false">Đóng</v-btn>
-                                    <v-btn color="blue darken-1" flat @click="save(step)">Lưu</v-btn>
-                                </v-card-actions>
-                            </v-card>
-                        </v-dialog>
+                        </OutcomeForm>
                         <template v-for="outcome in step.outcomes">
                             <v-btn color="error"
                                    @click="goToStep(outcome.nextStepTemporaryId)"
@@ -176,9 +179,11 @@
 
 <script>
     import Axios from 'axios';
+    import OutcomeForm from "./OutcomeForm";
 
     export default {
         name: "ProcessCreating",
+        components: {OutcomeForm},
         data() {
             return {
                 snackbar: false,
@@ -234,6 +239,7 @@
                 },
                 steps: [],
                 tmpSteps: [],
+                tmpStep: null,
                 rules: {
                     length: len => v => (v || '').length <= len || `Nội dung tối đa ${len} kí tự`,
                     required: v => !!v || 'Nội dung không được để trống'
@@ -304,16 +310,30 @@
                 }
                 this.el = 1;
             },
-            save(step) {
-                step.outcomes.push(Object.assign({}, this.newOutcome));
+            close(){
+                this.dialog = false;
+            },
+            save() {
+                if(this.newOutcome.name.trim() === ""){
+                    return;
+                }
+                if(this.newOutcome.description.trim() === ""){
+                    return;
+                }
+                if(this.newOutcome.nextStepTemporaryId === 0){
+                    return;
+                }
+
+                this.tmpStep.outcomes.push(Object.assign({}, this.newOutcome));
                 Object.assign(this.newOutcome, this.defaultOutcome);
                 this.dialog = false;
             },
             setDialog(temporaryId) {
-                Object.assign(this.tmpSteps, []);
+                this.tmpSteps = [];
                 for (var i = 0; i < temporaryId - 1; i++) {
                     this.tmpSteps.push(this.steps[i]);
                 }
+                this.tmpStep = this.steps[temporaryId - 1];
             },
             finish() {
                 this.loading = true;
