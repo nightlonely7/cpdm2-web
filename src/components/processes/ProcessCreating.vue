@@ -5,6 +5,10 @@
                 <v-icon left>timeline</v-icon>
                 TẠO MỚI QUY TRÌNH
             </v-toolbar-title>
+            <v-spacer/>
+            <v-btn to="/processes" color="primary">
+                <v-icon dark>arrow_back</v-icon>
+            </v-btn>
             <v-divider class="mx-2" inset vertical></v-divider>
         </v-toolbar>
         <v-card class="mb-3">
@@ -16,16 +20,19 @@
                 <!--                >-->
                 <!--                </v-text-field>-->
                 <v-text-field
+                        ref="txtName"
                         v-model="process.name"
                         label="Tên quy trình"
                         :rules="[rules.required,rules.length(50)]"
                 >
                 </v-text-field>
-                <v-textarea class="mb-5"
-                            label="Mô tả"
-                            v-model="process.description"
-                            counter="255"
-                            :rules="[rules.required, rules.length(255)]"
+                <v-textarea
+                        ref="txtDescription"
+                        class="mb-5"
+                        label="Mô tả"
+                        v-model="process.description"
+                        counter="255"
+                        :rules="[rules.required, rules.length(255)]"
                 ></v-textarea>
                 <v-text-field
                         v-model="numberOfSteps"
@@ -152,6 +159,18 @@
                 <v-btn color="success" @click="finish">LƯU</v-btn>
             </v-card-actions>
         </v-card>
+
+        <!--Snack bar-->
+        <v-snackbar v-model="snackbar" right>
+            {{snackbarText}}
+            <v-btn
+                    color="pink"
+                    flat
+                    @click="snackbar = false"
+            >
+                Close
+            </v-btn>
+        </v-snackbar>
     </div>
 </template>
 
@@ -162,6 +181,8 @@
         name: "ProcessCreating",
         data() {
             return {
+                snackbar: false,
+                snackbarText: null,
                 valid: false,
                 dialog: false,
                 loading: false,
@@ -202,12 +223,14 @@
                     description: "",
                     nextStepTemporaryId: 0,
                     lastStep: false,
+                    main: false,
                 },
                 defaultOutcome: {
                     name: "",
                     description: "",
                     nextStepTemporaryId: 0,
                     lastStep: false,
+                    main: false,
                 },
                 steps: [],
                 tmpSteps: [],
@@ -224,6 +247,13 @@
             });
         },
         methods: {
+            refresh(){
+                this.steps = [];
+                Object.assign(this.process, this.defaultProcess);
+                this.numberOfSteps = 0;
+                this.$refs.txtName.reset();
+                this.$refs.txtDescription.reset();
+            },
             getDepartment() {
                 this.loading = true;
                 Axios.get(`http://localhost:8080/departments`)
@@ -287,33 +317,36 @@
             },
             finish() {
                 this.loading = true;
-                console.log(this.steps[this.steps.length-1].outcomes.length);
                 //Add default outcome for each step
                 for (var i = 0; i < (this.steps.length - 1); i++) {
                     this.newOutcome.name = `Kết quả đúng cho bước ${this.steps[i].name}`;
                     this.newOutcome.description = `Mô tả ết quả đúng cho bước ${this.steps[i].name}`;
                     this.newOutcome.nextStepTemporaryId = this.steps[i + 1].temporaryId;
                     this.newOutcome.lastStep = false;
+                    this.newOutcome.main = true;
                     this.steps[i].outcomes.push(Object.assign({}, this.newOutcome));
                     Object.assign(this.newOutcome, this.defaultOutcome);
                 }
-                console.log(this.steps[this.steps.length-1].outcomes.length);
+                console.log(this.steps[this.steps.length - 1].outcomes.length);
                 this.newOutcome.name = `Kết quả đúng cho bước ${this.steps[this.steps.length - 1].name}`;
                 this.newOutcome.description = `Mô tả ết quả đúng cho bước ${this.steps[this.steps.length - 1].name}`;
                 this.newOutcome.nextStepTemporaryId = null;
                 this.newOutcome.lastStep = true;
+                this.newOutcome.main = true;
                 this.steps[this.steps.length - 1].outcomes.push(Object.assign({}, this.newOutcome));
                 Object.assign(this.newOutcome, this.defaultOutcome);
                 //Add steps to process
                 this.process.steps = this.steps;
+                console.log(this.process);
                 Axios.post(`http://localhost:8080/document_processes`, this.process).then(response => {
                     console.log('success');
-                    this.steps = [];
-                    Object.assign(this.process,this.defaultProcess);
-                    this.numberOfSteps = 0;
+                    this.refresh();
+                    this.snackbarText = "Thành công";
+                    this.snackbar = true;
                 }).catch(error => {
-                    if (error.response)
-                        console.log(error.response);
+                    console.log(error);
+                    this.snackbarText = "Thất bại";
+                    this.snackbar = true;
                 }).finally(() => {
                     this.loading = false;
                 });

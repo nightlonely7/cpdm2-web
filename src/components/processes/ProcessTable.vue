@@ -11,14 +11,12 @@
                 Tải lại
             </v-btn>
             <v-spacer></v-spacer>
-            <ProcessForm @refresh="refresh">
-                <template #activator="{on}">
-                    <v-btn v-on="on" color="primary">
-                        <v-icon left>add</v-icon>
-                        Tạo mới quy trình
-                    </v-btn>
-                </template>
-            </ProcessForm>
+            <router-link to="/processes_creating">
+                <v-btn v-on="on" color="primary">
+                    <v-icon left>add</v-icon>
+                    Tạo mới quy trình
+                </v-btn>
+            </router-link>
         </v-toolbar>
         <v-data-table
                 :items="processes"
@@ -49,7 +47,7 @@
 
 <script>
     import Axios from 'axios';
-    import ProcessForm from "./ProcessCreating";
+
     export default {
         name: "ProcessTable",
         data() {
