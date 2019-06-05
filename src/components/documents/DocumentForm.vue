@@ -280,6 +280,7 @@
     import '@ckeditor/ckeditor5-build-decoupled-document/build/translations/vi'
     import DocumentTemplateForm from "./DocumentTemplateForm";
     import OutsiderForm from "@/components/outsiders/OutsiderForm";
+    import {pushNotif} from "../../firebase";
 
     export default {
         name: "DocumentForm",
@@ -351,6 +352,19 @@
                     .then(response => {
                         this.close();
                         this.$emit("refresh");
+                        var document = response.data;
+                        Axios.get('http://localhost:8080/users/search/findAllDirector').
+                        then(response => {
+                            if (users.length > 0){
+                                var users = response.data;
+                                var title = this.creating ? "Văn bản mới" : "Văn  được chỉnh sửa";
+                                var detail = document.title;
+                                var url = `/documents/${document.id}`;
+                                for(var i in users){
+                                    pushNotif(title,detail,url,users[i]);
+                                }
+                            }
+                        }).catch(console.error)
                     })
                     .catch(error => {
                         if (error.response)

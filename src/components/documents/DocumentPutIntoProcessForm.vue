@@ -52,7 +52,8 @@
 </template>
 
 <script>
-    import Axios from 'axios'
+    import Axios from 'axios';
+    import {pushNotif} from "../../firebase";
 
     export default {
         name: "DocumentPutIntoProcessForm",
@@ -79,10 +80,17 @@
                         processId: this.processId
                     }
                 })
-                    .then(() => {
-                        this.close();
-                        this.$emit('refresh');
-                    })
+                    .then((response) => {
+                            this.close();
+                            this.$emit('refresh');
+                            var document = response.data;
+                            var user = document.currentStep.executor;
+                            var title = "Văn bản cần xử lý";
+                            var detail = document.title;
+                            var url = `/documents/${document.id}`;
+                            pushNotif(title, detail, url, user);
+                        }
+                    )
                     .catch(error => {
                         if (error.response) {
                             console.log(error.response)

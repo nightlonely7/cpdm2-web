@@ -58,7 +58,8 @@
 </template>
 
 <script>
-    import Axios from 'axios'
+    import Axios from 'axios';
+    import {pushNotif} from "../../firebase";
 
     export default {
         name: "DocumentExecutingForm",
@@ -84,9 +85,15 @@
                 Axios.patch(
                     `http://localhost:8080/documents/${this.document.id}/forward_process?outcomeId=${this.outcomeId}`,
                     this.formData, {params: {outcomeId: this.outcomeId}})
-                    .then(() => {
+                    .then((response) => {
                         this.close();
                         this.$emit('refresh');
+                        var document = response.data;
+                        var user = document.currentStep.executor;
+                        var title = "Văn bản cần xử lý";
+                        var detail = document.title;
+                        var url = `/documents/${document.id}`;
+                        pushNotif(title, detail, url, user);
                     })
                     .catch(error => {
                         if (error.response) {

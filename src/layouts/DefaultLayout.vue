@@ -28,7 +28,7 @@
                         <v-list-tile-title>About</v-list-tile-title>
                     </v-list-tile-content>
                 </v-list-tile>
-                <v-list-tile to="/departments">
+                <v-list-tile to="/departments" v-if="isAdmin">
                     <v-list-tile-action>
                         <v-icon>mdi-home</v-icon>
                     </v-list-tile-action>

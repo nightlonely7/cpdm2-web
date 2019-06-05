@@ -40,7 +40,8 @@
             <template #items="{item}">
                 <td class="text-xs-left">{{item.code}}</td>
                 <td class="text-xs-left">{{item.name}}</td>
-                <td class="text-xs-left">{{item.description | truncate(30)}}</td>
+                <td class="text-xs-left" v-if="item.description === null">{{item.description}}</td>
+                <td class="text-xs-left" v-if="item.description !== null">{{item.description | truncate(30)}}</td>
                 <td class="text-xs-left">
                     <v-chip color="success" v-if="item.available">
                         Đang hoạt động
