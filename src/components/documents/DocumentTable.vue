@@ -1,19 +1,241 @@
 <template>
     <div class="elevation-1">
-        <v-toolbar tabs flat fixed-tabs>
+        <v-expansion-panel class="elevation-0">
+            <v-expansion-panel-content>
+                <template #header>
+                    <span><v-icon left>search</v-icon>
+                    Tìm kiếm
+                    </span>
+                </template>
+                <v-card>
+                    <v-card-text>
+                        <v-btn color="primary" @click="resetSearch">Đặt lại</v-btn>
+                        <v-text-field v-model.trim="documentSearchForm.code"
+                                      label="Tìm bởi số hiệu"
+                                      clearable
+                        ></v-text-field>
+                        <v-text-field v-model.trim="documentSearchForm.title"
+                                      label="Tìm bởi tiêu đề"
+                                      clearable
+                        ></v-text-field>
+                        <v-text-field v-model.trim="documentSearchForm.summary"
+                                      label="Tìm bởi trích yếu"
+                                      clearable
+                        ></v-text-field>
+                        <v-text-field v-model.trim="documentSearchForm.decree"
+                                      label="Tìm bởi thông tư / nghị định"
+                                      clearable
+                        ></v-text-field>
+                        <v-text-field v-model.trim="documentSearchForm.detail"
+                                      label="Tìm bởi nội dung chi tiết"
+                                      clearable
+                        ></v-text-field>
+                        <v-expansion-panel>
+                            <v-expansion-panel-content>
+                                <template #header>
+                                    <span><v-icon left>search</v-icon>
+                                        Tìm kiếm theo nơi ban hành
+                                    </span>
+                                </template>
+                                <v-card>
+                                    <v-card-text>
+                                        <v-text-field v-model.trim="documentSearchForm.outsiderCode"
+                                                      label="Tìm bởi mã"
+                                                      clearable
+                                        ></v-text-field>
+                                        <v-text-field v-model.trim="documentSearchForm.outsiderName"
+                                                      label="Tìm bởi tên"
+                                                      clearable
+                                        ></v-text-field>
+                                        <v-text-field v-model.trim="documentSearchForm.outsiderContactData"
+                                                      label="Tìm bởi thông tin liên lạc"
+                                                      clearable
+                                        ></v-text-field>
+                                    </v-card-text>
 
-                <v-tabs
-                        v-model="tabs"
-                        slider-color="primary"
-                        color="transparent"
-                >
-                    <v-tab>
-                        <v-icon color="primary">mdi-arrow-collapse-down</v-icon>&nbsp;TẤT CẢ VĂN BẢN LIÊN QUAN
-                    </v-tab>
-                    <v-tab>
-                        <v-icon color="primary">mdi-share</v-icon>&nbsp;VĂN BẢN CHỜ XỬ LÝ
-                    </v-tab>
-                </v-tabs>
+                                </v-card>
+                            </v-expansion-panel-content>
+                        </v-expansion-panel>
+                        <v-layout row wrap>
+
+                            <!--Created Time From-->
+                            <v-flex xs12 sm6 md6>
+                                <v-dialog
+                                        ref="createdTimeFromDialog"
+                                        v-model="createdTimeFromMenu"
+                                        :return-value.sync="documentSearchForm.createdTimeFrom"
+                                        persistent
+                                        lazy
+                                        full-width
+                                        width="290px"
+                                >
+                                    <template #activator="{ on }">
+                                        <v-text-field
+                                                v-model="documentSearchForm.createdTimeFrom"
+                                                label="Ngày tạo từ"
+                                                prepend-inner-icon="mdi-calendar"
+                                                readonly
+                                                clearable
+                                                v-on="on"
+                                        ></v-text-field>
+                                    </template>
+                                    <v-date-picker
+                                            v-if="createdTimeFromMenu"
+                                            v-model="documentSearchForm.createdTimeFrom"
+                                            :max="documentSearchForm.createdTimeTo"
+                                            full-width
+                                            locale="vi-vn"
+                                    >
+                                        <v-spacer></v-spacer>
+                                        <v-btn flat color="primary"
+                                               @click="createdTimeFromMenu = false">Cancel
+                                        </v-btn>
+                                        <v-btn flat color="primary"
+                                               @click="$refs.createdTimeFromDialog.save(documentSearchForm.createdTimeFrom)">
+                                            OK
+                                        </v-btn>
+                                    </v-date-picker>
+                                </v-dialog>
+                            </v-flex>
+
+                            <!--Created Time To-->
+                            <v-flex xs12 sm6 md6>
+                                <v-dialog
+                                        ref="createdTimeToDialog"
+                                        v-model="createdTimeToMenu"
+                                        :return-value.sync="documentSearchForm.createdTimeTo"
+                                        persistent
+                                        lazy
+                                        full-width
+                                        width="290px"
+                                >
+                                    <template #activator="{ on }">
+                                        <v-text-field
+                                                v-model="documentSearchForm.createdTimeTo"
+                                                label="Ngày tạo đến"
+                                                prepend-inner-icon="mdi-calendar"
+                                                readonly
+                                                clearable
+                                                v-on="on"
+                                        ></v-text-field>
+                                    </template>
+                                    <v-date-picker
+                                            v-if="createdTimeToMenu"
+                                            v-model="documentSearchForm.createdTimeTo"
+                                            :min="documentSearchForm.createdTimeFrom"
+                                            full-width
+                                            locale="vi-vn"
+                                    >
+                                        <v-spacer></v-spacer>
+                                        <v-btn flat color="primary"
+                                               @click="createdTimeToMenu = false">Cancel
+                                        </v-btn>
+                                        <v-btn flat color="primary"
+                                               @click="$refs.createdTimeToDialog.save(documentSearchForm.createdTimeTo)">
+                                            OK
+                                        </v-btn>
+                                    </v-date-picker>
+                                </v-dialog>
+                            </v-flex>
+
+                            <!--Last Modified Time From-->
+                            <v-flex xs12 sm6 md6>
+                                <v-dialog
+                                        ref="lastModifiedTimeFromDialog"
+                                        v-model="lastModifiedTimeFromMenu"
+                                        :return-value.sync="documentSearchForm.lastModifiedTimeFrom"
+                                        persistent
+                                        lazy
+                                        full-width
+                                        width="290px"
+                                >
+                                    <template #activator="{ on }">
+                                        <v-text-field
+                                                v-model="documentSearchForm.lastModifiedTimeFrom"
+                                                label="Ngày chỉnh sửa gần nhất từ"
+                                                prepend-inner-icon="mdi-calendar"
+                                                readonly
+                                                clearable
+                                                v-on="on"
+                                        ></v-text-field>
+                                    </template>
+                                    <v-date-picker
+                                            v-if="lastModifiedTimeFromMenu"
+                                            v-model="documentSearchForm.lastModifiedTimeFrom"
+                                            :max="documentSearchForm.lastModifiedTimeTo"
+                                            full-width
+                                            locale="vi-vn"
+                                    >
+                                        <v-spacer></v-spacer>
+                                        <v-btn flat color="primary"
+                                               @click="lastModifiedTimeFromMenu = false">Cancel
+                                        </v-btn>
+                                        <v-btn flat color="primary"
+                                               @click="$refs.lastModifiedTimeFromDialog.save(documentSearchForm.lastModifiedTimeFrom)">
+                                            OK
+                                        </v-btn>
+                                    </v-date-picker>
+                                </v-dialog>
+                            </v-flex>
+
+                            <!--Last Modified Time To-->
+                            <v-flex xs12 sm6 md6>
+                                <v-dialog
+                                        ref="lastModifiedTimeToDialog"
+                                        v-model="lastModifiedTimeToMenu"
+                                        :return-value.sync="documentSearchForm.lastModifiedTimeTo"
+                                        persistent
+                                        lazy
+                                        full-width
+                                        width="290px"
+                                >
+                                    <template #activator="{ on }">
+                                        <v-text-field
+                                                v-model="documentSearchForm.lastModifiedTimeTo"
+                                                label="Ngày tạo từ"
+                                                prepend-inner-icon="mdi-calendar"
+                                                readonly
+                                                clearable
+                                                v-on="on"
+                                        ></v-text-field>
+                                    </template>
+                                    <v-date-picker
+                                            v-if="lastModifiedTimeToMenu"
+                                            v-model="documentSearchForm.lastModifiedTimeTo"
+                                            :min="documentSearchForm.lastModifiedTimeFrom"
+                                            full-width
+                                            locale="vi-vn"
+                                    >
+                                        <v-spacer></v-spacer>
+                                        <v-btn flat color="primary"
+                                               @click="lastModifiedTimeToMenu = false">Cancel
+                                        </v-btn>
+                                        <v-btn flat color="primary"
+                                               @click="$refs.lastModifiedTimeToDialog.save(documentSearchForm.lastModifiedTimeTo)">
+                                            OK
+                                        </v-btn>
+                                    </v-date-picker>
+                                </v-dialog>
+                            </v-flex>
+                        </v-layout>
+                    </v-card-text>
+                </v-card>
+            </v-expansion-panel-content>
+        </v-expansion-panel>
+        <v-toolbar tabs flat fixed-tabs class="elevation-0">
+
+            <v-tabs
+                    v-model="tabs"
+                    slider-color="primary"
+                    color="transparent"
+            >
+                <v-tab>
+                    <v-icon color="primary">mdi-arrow-collapse-down</v-icon>&nbsp;TẤT CẢ VĂN BẢN LIÊN QUAN
+                </v-tab>
+                <v-tab>
+                    <v-icon color="primary">mdi-share</v-icon>&nbsp;VĂN BẢN CHỜ XỬ LÝ
+                </v-tab>
+            </v-tabs>
 
         </v-toolbar>
         <v-toolbar flat color="white">
@@ -47,6 +269,7 @@
                 :no-data-text="'Không có dữ liệu'"
                 :no-results-text="'Không tìm thấy dữ liệu tương ứng'"
                 :must-sort="true"
+                class="elevation-0"
         >
 
             <template #pageText="{pageStart, pageStop, itemsLength}">
@@ -58,7 +281,9 @@
                 <td class="text-xs-left">{{item.summary}}</td>
                 <td class="text-xs-left">{{moment(item.createdTime).format('HH:mm:ss DD-MM-YYYY')}}</td>
                 <td class="text-xs-left">{{moment(item.lastModifiedTime).format('HH:mm:ss DD-MM-YYYY')}}</td>
-                <td class="text-xs-left"><router-link :to="`/documents/${item.id}`">Xem chi tiết</router-link></td>
+                <td class="text-xs-left">
+                    <router-link :to="`/documents/${item.id}`">Xem chi tiết</router-link>
+                </td>
             </template>
 
         </v-data-table>
@@ -69,6 +294,7 @@
     import Axios from 'axios'
     import DocumentForm from "@/components/documents/DocumentForm";
     import {mapGetters} from "vuex";
+    import _ from 'lodash'
 
     export default {
         name: "DocumentTable",
@@ -90,6 +316,24 @@
                     sortBy: 'createdTime',
                     descending: true
                 },
+                documentSearchForm: {
+                    code: null,
+                    title: null,
+                    summary: null,
+                    decree: null,
+                    detail: null,
+                    outsiderCode: null,
+                    outsiderName: null,
+                    outsiderContactData: null,
+                    createdTimeFrom: null,
+                    createdTimeTo: null,
+                    lastModifiedTimeFrom: null,
+                    lastModifiedTimeTo: null,
+                },
+                createdTimeFromMenu: false,
+                createdTimeToMenu: false,
+                lastModifiedTimeFromMenu: false,
+                lastModifiedTimeToMenu: false,
             }
         },
         computed: {
@@ -106,7 +350,13 @@
                 const url = this.executing ?
                     `http://localhost:8080/documents/search/executing` :
                     `http://localhost:8080/documents/search/creates`;
-                Axios.get(url)
+                const params = {...this.documentSearchForm};
+                params.createdTimeFrom = params.createdTimeFrom && params.createdTimeFrom.concat('T00:00');
+                params.createdTimeTo = params.createdTimeTo && params.createdTimeTo.concat('T00:00');
+                params.lastModifiedTimeFrom = params.lastModifiedTimeFrom && params.lastModifiedTimeFrom.concat('T00:00');
+                params.lastModifiedTimeTo = params.lastModifiedTimeTo && params.lastModifiedTimeTo.concat('T00:00');
+                console.log(params);
+                Axios.get(url, {params})
                     .then(response => {
                         this.documents = response.data.content;
                     })
@@ -114,6 +364,11 @@
                     .finally(() => {
                         this.loading = false;
                     })
+            },
+            resetSearch() {
+                Object.keys(this.documentSearchForm).forEach(index =>
+                    this.documentSearchForm[index] = null
+                );
             }
         },
         watch: {
@@ -133,7 +388,17 @@
                     default:
                         this.getDocuments();
                 }
+            },
+            documentSearchForm: {
+                handler() {
+                    this.pagination.page = 1;
+                    this.debouncedGetDocuments();
+                },
+                deep: true
             }
+        },
+        created() {
+            this.debouncedGetDocuments = _.debounce(this.getDocuments, 500);
         }
     }
 </script>
