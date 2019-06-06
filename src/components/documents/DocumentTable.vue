@@ -88,7 +88,7 @@
                                     >
                                         <v-spacer></v-spacer>
                                         <v-btn flat color="primary"
-                                               @click="createdTimeFromMenu = false">Cancel
+                                               @click="createdTimeFromMenu = false">Hủy
                                         </v-btn>
                                         <v-btn flat color="primary"
                                                @click="$refs.createdTimeFromDialog.save(documentSearchForm.createdTimeFrom)">
@@ -128,7 +128,7 @@
                                     >
                                         <v-spacer></v-spacer>
                                         <v-btn flat color="primary"
-                                               @click="createdTimeToMenu = false">Cancel
+                                               @click="createdTimeToMenu = false">Hủy
                                         </v-btn>
                                         <v-btn flat color="primary"
                                                @click="$refs.createdTimeToDialog.save(documentSearchForm.createdTimeTo)">
@@ -168,7 +168,7 @@
                                     >
                                         <v-spacer></v-spacer>
                                         <v-btn flat color="primary"
-                                               @click="lastModifiedTimeFromMenu = false">Cancel
+                                               @click="lastModifiedTimeFromMenu = false">Hủy
                                         </v-btn>
                                         <v-btn flat color="primary"
                                                @click="$refs.lastModifiedTimeFromDialog.save(documentSearchForm.lastModifiedTimeFrom)">
@@ -208,7 +208,7 @@
                                     >
                                         <v-spacer></v-spacer>
                                         <v-btn flat color="primary"
-                                               @click="lastModifiedTimeToMenu = false">Cancel
+                                               @click="lastModifiedTimeToMenu = false">Hủy
                                         </v-btn>
                                         <v-btn flat color="primary"
                                                @click="$refs.lastModifiedTimeToDialog.save(documentSearchForm.lastModifiedTimeTo)">
@@ -217,7 +217,256 @@
                                     </v-date-picker>
                                 </v-dialog>
                             </v-flex>
+
+                            <!--Arrival Date From-->
+                            <v-flex xs12 sm6 md6>
+                                <v-dialog
+                                        ref="arrivalDateFromDialog"
+                                        v-model="arrivalDateFromMenu"
+                                        :return-value.sync="documentSearchForm.arrivalDateFrom"
+                                        persistent
+                                        lazy
+                                        full-width
+                                        width="290px"
+                                >
+                                    <template #activator="{ on }">
+                                        <v-text-field
+                                                v-model="documentSearchForm.arrivalDateFrom"
+                                                label="Ngày nhận từ"
+                                                prepend-inner-icon="mdi-calendar"
+                                                readonly
+                                                clearable
+                                                v-on="on"
+                                        ></v-text-field>
+                                    </template>
+                                    <v-date-picker
+                                            v-if="arrivalDateFromMenu"
+                                            v-model="documentSearchForm.arrivalDateFrom"
+                                            :max="documentSearchForm.arrivalDateTo"
+                                            full-width
+                                            locale="vi-vn"
+                                    >
+                                        <v-spacer></v-spacer>
+                                        <v-btn flat color="primary"
+                                               @click="arrivalDateFromMenu = false">Hủy
+                                        </v-btn>
+                                        <v-btn flat color="primary"
+                                               @click="$refs.arrivalDateFromDialog.save(documentSearchForm.arrivalDateFrom)">
+                                            OK
+                                        </v-btn>
+                                    </v-date-picker>
+                                </v-dialog>
+                            </v-flex>
+
+                            <!--Arrival Date To-->
+                            <v-flex xs12 sm6 md6>
+                                <v-dialog
+                                        ref="arrivalDateToDialog"
+                                        v-model="arrivalDateToMenu"
+                                        :return-value.sync="documentSearchForm.arrivalDateTo"
+                                        persistent
+                                        lazy
+                                        full-width
+                                        width="290px"
+                                >
+                                    <template #activator="{ on }">
+                                        <v-text-field
+                                                v-model="documentSearchForm.arrivalDateTo"
+                                                label="Ngày nhận đến"
+                                                prepend-inner-icon="mdi-calendar"
+                                                readonly
+                                                clearable
+                                                v-on="on"
+                                        ></v-text-field>
+                                    </template>
+                                    <v-date-picker
+                                            v-if="arrivalDateToMenu"
+                                            v-model="documentSearchForm.arrivalDateTo"
+                                            :min="documentSearchForm.arrivalDateFrom"
+                                            full-width
+                                            locale="vi-vn"
+                                    >
+                                        <v-spacer></v-spacer>
+                                        <v-btn flat color="primary"
+                                               @click="arrivalDateToMenu = false">Hủy
+                                        </v-btn>
+                                        <v-btn flat color="primary"
+                                               @click="$refs.arrivalDateToDialog.save(documentSearchForm.arrivalDateTo)">
+                                            OK
+                                        </v-btn>
+                                    </v-date-picker>
+                                </v-dialog>
+                            </v-flex>
+
+                            <!--Effective Date From-->
+                            <v-flex xs12 sm6 md6>
+                                <v-dialog
+                                        ref="effectiveDateFromDialog"
+                                        v-model="effectiveDateFromMenu"
+                                        :return-value.sync="documentSearchForm.effectiveDateFrom"
+                                        persistent
+                                        lazy
+                                        full-width
+                                        width="290px"
+                                >
+                                    <template #activator="{ on }">
+                                        <v-text-field
+                                                v-model="documentSearchForm.effectiveDateFrom"
+                                                label="Ngày có hiệu lực từ"
+                                                prepend-inner-icon="mdi-calendar"
+                                                readonly
+                                                clearable
+                                                v-on="on"
+                                        ></v-text-field>
+                                    </template>
+                                    <v-date-picker
+                                            v-if="effectiveDateFromMenu"
+                                            v-model="documentSearchForm.effectiveDateFrom"
+                                            :max="documentSearchForm.effectiveDateTo"
+                                            full-width
+                                            locale="vi-vn"
+                                    >
+                                        <v-spacer></v-spacer>
+                                        <v-btn flat color="primary"
+                                               @click="effectiveDateFromMenu = false">Hủy
+                                        </v-btn>
+                                        <v-btn flat color="primary"
+                                               @click="$refs.effectiveDateFromDialog.save(documentSearchForm.effectiveDateFrom)">
+                                            OK
+                                        </v-btn>
+                                    </v-date-picker>
+                                </v-dialog>
+                            </v-flex>
+
+                            <!--Effective Date To-->
+                            <v-flex xs12 sm6 md6>
+                                <v-dialog
+                                        ref="effectiveDateToDialog"
+                                        v-model="effectiveDateToMenu"
+                                        :return-value.sync="documentSearchForm.effectiveDateTo"
+                                        persistent
+                                        lazy
+                                        full-width
+                                        width="290px"
+                                >
+                                    <template #activator="{ on }">
+                                        <v-text-field
+                                                v-model="documentSearchForm.effectiveDateTo"
+                                                label="Ngày có hiệu lực đến"
+                                                prepend-inner-icon="mdi-calendar"
+                                                readonly
+                                                clearable
+                                                v-on="on"
+                                        ></v-text-field>
+                                    </template>
+                                    <v-date-picker
+                                            v-if="effectiveDateToMenu"
+                                            v-model="documentSearchForm.effectiveDateTo"
+                                            :min="documentSearchForm.effectiveDateFrom"
+                                            full-width
+                                            locale="vi-vn"
+                                    >
+                                        <v-spacer></v-spacer>
+                                        <v-btn flat color="primary"
+                                               @click="effectiveDateToMenu = false">Hủy
+                                        </v-btn>
+                                        <v-btn flat color="primary"
+                                               @click="$refs.effectiveDateToDialog.save(documentSearchForm.effectiveDateTo)">
+                                            OK
+                                        </v-btn>
+                                    </v-date-picker>
+                                </v-dialog>
+                            </v-flex>
+
+                            <!--Effective End Date From-->
+                            <v-flex xs12 sm6 md6>
+                                <v-dialog
+                                        ref="effectiveEndDateFromDialog"
+                                        v-model="effectiveEndDateFromMenu"
+                                        :return-value.sync="documentSearchForm.effectiveEndDateFrom"
+                                        persistent
+                                        lazy
+                                        full-width
+                                        width="290px"
+                                >
+                                    <template #activator="{ on }">
+                                        <v-text-field
+                                                v-model="documentSearchForm.effectiveEndDateFrom"
+                                                label="Ngày hết hiệu lực từ"
+                                                prepend-inner-icon="mdi-calendar"
+                                                readonly
+                                                clearable
+                                                v-on="on"
+                                        ></v-text-field>
+                                    </template>
+                                    <v-date-picker
+                                            v-if="effectiveEndDateFromMenu"
+                                            v-model="documentSearchForm.effectiveEndDateFrom"
+                                            :max="documentSearchForm.effectiveEndDateTo"
+                                            full-width
+                                            locale="vi-vn"
+                                    >
+                                        <v-spacer></v-spacer>
+                                        <v-btn flat color="primary"
+                                               @click="effectiveEndDateFromMenu = false">Hủy
+                                        </v-btn>
+                                        <v-btn flat color="primary"
+                                               @click="$refs.effectiveEndDateFromDialog.save(documentSearchForm.effectiveEndDateFrom)">
+                                            OK
+                                        </v-btn>
+                                    </v-date-picker>
+                                </v-dialog>
+                            </v-flex>
+
+                            <!--Effective End Date To-->
+                            <v-flex xs12 sm6 md6>
+                                <v-dialog
+                                        ref="effectiveEndDateToDialog"
+                                        v-model="effectiveEndDateToMenu"
+                                        :return-value.sync="documentSearchForm.effectiveEndDateTo"
+                                        persistent
+                                        lazy
+                                        full-width
+                                        width="290px"
+                                >
+                                    <template #activator="{ on }">
+                                        <v-text-field
+                                                v-model="documentSearchForm.effectiveEndDateTo"
+                                                label="Ngày hết hiệu lực đến"
+                                                prepend-inner-icon="mdi-calendar"
+                                                readonly
+                                                clearable
+                                                v-on="on"
+                                        ></v-text-field>
+                                    </template>
+                                    <v-date-picker
+                                            v-if="effectiveEndDateToMenu"
+                                            v-model="documentSearchForm.effectiveEndDateTo"
+                                            :min="documentSearchForm.effectiveEndDateFrom"
+                                            full-width
+                                            locale="vi-vn"
+                                    >
+                                        <v-spacer></v-spacer>
+                                        <v-btn flat color="primary"
+                                               @click="effectiveEndDateToMenu = false">Hủy
+                                        </v-btn>
+                                        <v-btn flat color="primary"
+                                               @click="$refs.effectiveEndDateToDialog.save(documentSearchForm.effectiveEndDateTo)">
+                                            OK
+                                        </v-btn>
+                                    </v-date-picker>
+                                </v-dialog>
+                            </v-flex>
                         </v-layout>
+
+                        <v-checkbox v-model="documentSearchForm.startedProcessing"
+                                    label="Đang xử lý"
+                                    :disabled="documentSearchForm.processed"
+                        ></v-checkbox>
+                        <v-checkbox v-model="documentSearchForm.processed"
+                                    label="Đã xử lý"
+                                    :disabled="documentSearchForm.startedProcessing"
+                        >Đã xử lý</v-checkbox>
                     </v-card-text>
                 </v-card>
             </v-expansion-panel-content>
@@ -277,10 +526,12 @@
             </template>
 
             <template #items="{item}">
+                <td class="text-xs-left">{{item.code}}</td>
                 <td class="text-xs-left">{{item.title}}</td>
                 <td class="text-xs-left">{{item.summary}}</td>
-                <td class="text-xs-left">{{moment(item.createdTime).format('HH:mm:ss DD-MM-YYYY')}}</td>
-                <td class="text-xs-left">{{moment(item.lastModifiedTime).format('HH:mm:ss DD-MM-YYYY')}}</td>
+                <td class="text-xs-left">{{item.outsider.name}}</td>
+                <td class="text-xs-left">{{moment(item.createdTime).format('HH:mm:ss DD/MM/YYYY')}}</td>
+                <td class="text-xs-left">{{moment(item.arrivalDate).format('DD/MM/YYYY')}}</td>
                 <td class="text-xs-left">
                     <router-link :to="`/documents/${item.id}`">Xem chi tiết</router-link>
                 </td>
@@ -306,10 +557,12 @@
                 documents: [],
                 loading: false,
                 headers: [
+                    {text: 'Số hiệu', value: 'code'},
                     {text: 'Tiêu đề', value: 'title'},
                     {text: 'Trích yếu', value: 'summary'},
+                    {text: 'Nơi ban hành', value: 'outsider.name'},
                     {text: 'Thời gian tạo', value: 'createdTime'},
-                    {text: 'Thời gian chỉnh sửa gần nhất', value: 'lastModifiedTime'},
+                    {text: 'Ngày nhận', value: 'arrivalDate'},
                     {text: 'Thao tác', value: null},
                 ],
                 pagination: {
@@ -329,11 +582,25 @@
                     createdTimeTo: null,
                     lastModifiedTimeFrom: null,
                     lastModifiedTimeTo: null,
+                    arrivalDateFrom: null,
+                    arrivalDateTo: null,
+                    effectiveDateFrom: null,
+                    effectiveDateTo: null,
+                    effectiveEndDateFrom: null,
+                    effectiveEndDateTo: null,
+                    startedProcessing: null,
+                    processed: null,
                 },
                 createdTimeFromMenu: false,
                 createdTimeToMenu: false,
                 lastModifiedTimeFromMenu: false,
                 lastModifiedTimeToMenu: false,
+                arrivalDateFromMenu: false,
+                arrivalDateToMenu: false,
+                effectiveDateFromMenu: false,
+                effectiveDateToMenu: false,
+                effectiveEndDateFromMenu: false,
+                effectiveEndDateToMenu: false,
             }
         },
         computed: {

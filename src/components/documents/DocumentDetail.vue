@@ -27,19 +27,19 @@
                 </tr>
                 <tr>
                     <td>Ngày văn bản đến</td>
-                    <td>{{document.arrivalDate}}</td>
+                    <td>{{moment(document.arrivalDate).format('DD/MM/YYYY')}}</td>
                 </tr>
                 <tr>
                     <td>Ngày văn bản có hiệu lực</td>
-                    <td>{{document.effectiveDate}}</td>
+                    <td>{{moment(document.effectiveDate).format('DD/MM/YYYY')}}</td>
                 </tr>
                 <tr>
                     <td>Ngày văn bản hết hiệu lực</td>
-                    <td>{{document.effectiveEndDate}}</td>
+                    <td>{{moment(document.effectiveEndDate).format('DD/MM/YYYY')}}</td>
                 </tr>
                 <tr>
                     <td>Thời gian tạo</td>
-                    <td>{{document.createdTime}}</td>
+                    <td>{{moment(document.createdTime).format('HH:mm:ss DD/MM/YYYY')}}</td>
                 </tr>
                 <tr v-if="isAdmin">
                     <td>Quá trình xử lý</td>
@@ -49,11 +49,12 @@
                 </tr>
                 <tr>
                     <td>Thời gian chỉnh sửa gần nhất</td>
-                    <td>{{document.lastModifiedTime}}</td>
+                    <td>{{moment(document.lastModifiedTime).format('HH:mm:ss DD/MM/YYYY')}}</td>
                 </tr>
 
             </table>
 
+            <br>
             <br>
 
             <v-card>
@@ -63,6 +64,9 @@
                 <v-card-text class="document-detail" v-html="document.detail"></v-card-text>
 
             </v-card>
+
+            <br>
+            <br>
 
             <template v-if="!document.startedProcessing && isAdmin">
                 <DocumentPutIntoProcessForm :id="id" @refresh="getDocumentDetail">
@@ -74,6 +78,7 @@
                     </template>
                 </DocumentPutIntoProcessForm>
             </template>
+
             <template v-if="document.currentStep && (document.currentStep.executor.username === username)">
                 <DocumentExecutingForm :document="{...document}" @refresh="getDocumentDetail">
                     <template #activator="{on}">
@@ -84,8 +89,13 @@
                     </template>
                 </DocumentExecutingForm>
             </template>
+            <br>
+            <br>
+            <DocumentFile :document="document"></DocumentFile>
+            <br>
+            <br>
+            <DocumentFeedback :document="document"></DocumentFeedback>
         </template>
-
 
     </div>
 </template>
@@ -96,10 +106,14 @@
     import {mapGetters} from "vuex";
     import DocumentExecutingForm from "@/components/documents/DocumentExecutingForm";
     import DocumentProcessTracking from "@/components/documents/DocumentProcessTracking";
+    import DocumentFile from "./DocumentFile";
+    import DocumentFeedback from "./DocumentFeedback";
 
     export default {
         name: "DocumentDetail",
-        components: {DocumentProcessTracking, DocumentExecutingForm, DocumentPutIntoProcessForm},
+        components: {
+            DocumentFeedback,
+            DocumentFile, DocumentProcessTracking, DocumentExecutingForm, DocumentPutIntoProcessForm},
         props: {
             id: Number,
         },
