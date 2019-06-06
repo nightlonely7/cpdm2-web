@@ -12,6 +12,11 @@ const router = new Router({
             component: () => import('@/views/LoginPage.vue')
         },
         {
+            path: '/',
+            name: 'documents',
+            component: () => import('@/views/DocumentPage.vue')
+        },
+        {
             path: '/documents',
             name: 'documents',
             component: () => import('@/views/DocumentPage.vue')

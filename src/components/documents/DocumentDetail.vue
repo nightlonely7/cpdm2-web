@@ -94,7 +94,7 @@
             <DocumentFile :document="document"></DocumentFile>
             <br>
             <br>
-            <DocumentFeedback :document="document"></DocumentFeedback>
+            <DocumentFeedback :document="document" v-if="isAdmin"></DocumentFeedback>
         </template>
 
     </div>
