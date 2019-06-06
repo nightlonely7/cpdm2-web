@@ -192,7 +192,7 @@
                                     <template #activator="{ on }">
                                         <v-text-field
                                                 v-model="documentSearchForm.lastModifiedTimeTo"
-                                                label="Ngày tạo từ"
+                                                label="Ngày chỉnh sửa gần nhất đến"
                                                 prepend-inner-icon="mdi-calendar"
                                                 readonly
                                                 clearable

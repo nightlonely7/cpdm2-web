@@ -31,7 +31,7 @@
 
                         <v-flex xs12 sm8 md10>
                             <v-autocomplete
-                                    v-model="formData.outsiderId"
+                                    v-model="formData.outsider.id"
                                     :items="outsiderOptions"
                                     item-value="id"
                                     :item-text="itemText"
@@ -60,10 +60,10 @@
                                     </v-btn>
                                 </template>
                             </OutsiderForm>
-                            <OutsiderForm :id="formData.outsiderId" @refresh="refreshOutsider">
+                            <OutsiderForm :id="formData.outsider.id" @refresh="refreshOutsider">
                                 <template #activator="{on}">
                                     <v-btn v-on="on" fab outline color="primary"
-                                           title="Chỉnh sửa nơi ban hành" :disabled="formData.outsiderId === null">
+                                           title="Chỉnh sửa nơi ban hành" :disabled="formData.outsider.id === null">
                                         <v-icon>mdi-pencil</v-icon>
                                     </v-btn>
                                 </template>
@@ -275,7 +275,6 @@
 
 <script>
     import Axios from 'axios'
-    import _ from 'lodash'
     import DecoupledEditor from '@ckeditor/ckeditor5-build-decoupled-document';
     import '@ckeditor/ckeditor5-build-decoupled-document/build/translations/vi'
     import DocumentTemplateForm from "./DocumentTemplateForm";
@@ -298,7 +297,9 @@
                         arrivalDate: null,
                         effectiveDate: null,
                         effectiveEndDate: null,
-                        outsiderId: null,
+                        outsider: {
+                            id: null,
+                        }
                     }
                 }
             },
@@ -343,22 +344,22 @@
                 this.dialog = false;
             },
             save() {
-                console.log(this.formData);
                 this.loading = true;
                 const url = this.creating
                     ? `http://localhost:8080/documents`
                     : `http://localhost:8080/documents/${this.form.id}`;
-                const data = this.formData;
+                let data = this.formData;
+                data.outsiderId = data.outsider.id;
+                console.log(data);
                 const method = this.creating ? 'POST' : 'PUT';
                 Axios({url, data, method})
                     .then(response => {
                         this.close();
                         this.$emit("refresh");
                         var document = response.data;
-                        Axios.get('http://localhost:8080/users/search/findAllDirector').
-                        then(response => {
+                        Axios.get('http://localhost:8080/users/search/findAllDirector').then(response => {
                             var users = response.data;
-                            if (users.length > 0){
+                            if (users.length > 0) {
                                 var title = this.creating ? "Văn bản mới" : "Văn  được chỉnh sửa";
                                 var detail = document.title;
                                 var url = `/documents/${document.id}`;
@@ -376,14 +377,9 @@
                         this.loading = false;
                     });
             },
-            getOutsiderOptions(searchValue) {
+            getOutsiderOptions() {
                 this.outsiderOptionsLoading = true;
-                Axios.get(`http://localhost:8080/outsiders/search/findAllSummaryByNameContainsOrCodeContains`, {
-                    params: {
-                        name: searchValue,
-                        code: searchValue,
-                    }
-                })
+                Axios.get(`http://localhost:8080/outsiders`)
                     .then(response => {
                         console.log(response.data);
                         this.outsiderOptions = response.data;
@@ -399,7 +395,7 @@
             refreshOutsider(id) {
                 console.log('refresh');
                 this.getOutsiderOptions();
-                this.formData.outsiderId = id;
+                this.formData.outsider.id = id;
             },
             onEditorReady(editor) {
                 // Insert the toolbar before the editable area.
@@ -447,17 +443,13 @@
             dialog(val) {
                 if (val && !this.loaded) {
                     this.getTemplateOptions();
+                    this.getOutsiderOptions();
                     this.loaded = true;
-                }
-            },
-            outsiderOptionsSearch(val) {
-                if (val && !!val.trim().length) {
-                    this.debouncedGetOutsiderOptions(val.trim());
                 }
             },
         },
         created() {
-            this.debouncedGetOutsiderOptions = _.debounce(this.getOutsiderOptions, 500);
+
         }
     }
 </script>
