@@ -345,7 +345,9 @@
             save() {
                 console.log(this.formData);
                 this.loading = true;
-                const url = `http://localhost:8080/documents`;
+                const url = this.creating
+                    ? `http://localhost:8080/documents`
+                    : `http://localhost:8080/documents/${this.form.id}`;
                 const data = this.formData;
                 const method = this.creating ? 'POST' : 'PUT';
                 Axios({url, data, method})
@@ -353,15 +355,14 @@
                         this.close();
                         this.$emit("refresh");
                         var document = response.data;
-                        Axios.get('http://localhost:8080/users/search/findAllDirector').
-                        then(response => {
-                            if (users.length > 0){
-                                var users = response.data;
+                        Axios.get('http://localhost:8080/users/search/findAllDirector').then(response => {
+                            var users = response.data;
+                            if (users.length > 0) {
                                 var title = this.creating ? "Văn bản mới" : "Văn  được chỉnh sửa";
                                 var detail = document.title;
                                 var url = `/documents/${document.id}`;
-                                for(var i in users){
-                                    pushNotif(title,detail,url,users[i]);
+                                for (var i in users) {
+                                    pushNotif(title, detail, url, users[i]);
                                 }
                             }
                         }).catch(console.error)
@@ -375,7 +376,6 @@
                     });
             },
             getOutsiderOptions(searchValue) {
-                console.log(searchValue)
                 this.outsiderOptionsLoading = true;
                 Axios.get(`http://localhost:8080/outsiders/search/findAllSummaryByNameContainsOrCodeContains`, {
                     params: {

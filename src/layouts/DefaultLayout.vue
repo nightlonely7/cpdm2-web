@@ -22,10 +22,26 @@
                 </v-list-tile>
                 <v-list-tile to="/documents">
                     <v-list-tile-action>
+                        <v-icon>mdi-arrow-collapse-right</v-icon>
+                    </v-list-tile-action>
+                    <v-list-tile-content>
+                        <v-list-tile-title>Văn bản đến</v-list-tile-title>
+                    </v-list-tile-content>
+                </v-list-tile>
+                <v-list-tile>
+                    <v-list-tile-action>
+                        <v-icon>mdi-arrow-expand-right</v-icon>
+                    </v-list-tile-action>
+                    <v-list-tile-content>
+                        <v-list-tile-title>Văn bản đi</v-list-tile-title>
+                    </v-list-tile-content>
+                </v-list-tile>
+                <v-list-tile>
+                    <v-list-tile-action>
                         <v-icon>mdi-home</v-icon>
                     </v-list-tile-action>
                     <v-list-tile-content>
-                        <v-list-tile-title>Quản lý văn bản</v-list-tile-title>
+                        <v-list-tile-title>Văn bản nội bộ</v-list-tile-title>
                     </v-list-tile-content>
                 </v-list-tile>
                 <v-list-tile to="/processes" v-if="isAdmin">

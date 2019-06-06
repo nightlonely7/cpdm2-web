@@ -68,16 +68,24 @@
             <br>
             <br>
 
-            <template v-if="!document.startedProcessing && isAdmin">
-                <DocumentPutIntoProcessForm :id="id" @refresh="getDocumentDetail">
-                    <template #activator="{on}">
-                        <v-btn v-on="on" color="primary">
-                            <v-icon left>build</v-icon>
-                            Đưa văn bản vào quy trình xử lý
-                        </v-btn>
-                    </template>
-                </DocumentPutIntoProcessForm>
-            </template>
+            <DocumentPutIntoProcessForm :id="id" @refresh="getDocumentDetail"
+                                        v-if="!document.startedProcessing && isAdmin">
+                <template #activator="{on}">
+                    <v-btn v-on="on" color="primary">
+                        <v-icon left>build</v-icon>
+                        Đưa văn bản vào quy trình xử lý
+                    </v-btn>
+                </template>
+            </DocumentPutIntoProcessForm>
+
+            <DocumentForm @refresh="getDocumentDetail" v-if="isAdmin" :form="{...document}">
+                <template #activator="{on}">
+                    <v-btn v-on="on" color="primary">
+                        <v-icon left>mdi-pencil</v-icon>
+                        Chỉnh sửa
+                    </v-btn>
+                </template>
+            </DocumentForm>
 
             <template v-if="document.currentStep && (document.currentStep.executor.username === username)">
                 <DocumentExecutingForm :document="{...document}" @refresh="getDocumentDetail">
@@ -108,12 +116,15 @@
     import DocumentProcessTracking from "@/components/documents/DocumentProcessTracking";
     import DocumentFile from "./DocumentFile";
     import DocumentFeedback from "./DocumentFeedback";
+    import DocumentForm from "@/components/documents/DocumentForm";
 
     export default {
         name: "DocumentDetail",
         components: {
+            DocumentForm,
             DocumentFeedback,
-            DocumentFile, DocumentProcessTracking, DocumentExecutingForm, DocumentPutIntoProcessForm},
+            DocumentFile, DocumentProcessTracking, DocumentExecutingForm, DocumentPutIntoProcessForm
+        },
         props: {
             id: Number,
         },
@@ -165,17 +176,20 @@
     td {
         padding: 15px;
     }
-    .document-detail >>> .table td{
+
+    .document-detail >>> .table td {
         border: 1px solid black;
         border-collapse: collapse;
         padding: 5px;
     }
-    .document-detail >>> .table th{
+
+    .document-detail >>> .table th {
         border: 1px solid black;
         border-collapse: collapse;
         padding: 5px;
     }
-    .document-detail >>> .table table{
+
+    .document-detail >>> .table table {
         border: 1px solid black;
         border-collapse: collapse;
         margin: auto;

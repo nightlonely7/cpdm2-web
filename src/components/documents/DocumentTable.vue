@@ -458,15 +458,27 @@
                                 </v-dialog>
                             </v-flex>
                         </v-layout>
+                        <div>
+                            <v-label>Trạng thái</v-label>
+                            <v-layout wrap>
 
-                        <v-checkbox v-model="documentSearchForm.startedProcessing"
-                                    label="Đang xử lý"
-                                    :disabled="documentSearchForm.processed"
-                        ></v-checkbox>
-                        <v-checkbox v-model="documentSearchForm.processed"
-                                    label="Đã xử lý"
-                                    :disabled="documentSearchForm.startedProcessing"
-                        >Đã xử lý</v-checkbox>
+                                <v-flex>
+                                    <v-checkbox v-model="documentSearchForm.startedProcessing"
+                                                label="Đang xử lý"
+                                                :disabled="documentSearchForm.processed"
+                                    ></v-checkbox>
+                                </v-flex>
+                                <v-flex>
+                                    <v-checkbox v-model="documentSearchForm.processed"
+                                                label="Đã xử lý"
+                                                :disabled="documentSearchForm.startedProcessing"
+                                    >Đã xử lý
+                                    </v-checkbox>
+                                </v-flex>
+                            </v-layout>
+                        </div>
+
+
                     </v-card-text>
                 </v-card>
             </v-expansion-panel-content>
