@@ -340,7 +340,7 @@
                 //Add default outcome for each step
                 for (var i = 0; i < (this.steps.length - 1); i++) {
                     this.newOutcome.name = `Chuyển tới bước tiếp theo`;
-                    this.newOutcome.description = `Mô tả kết quả đúng cho bước ${this.steps[i].name}`;
+                    this.newOutcome.description = `Chuyển tới bước tiếp theo`;
                     this.newOutcome.nextStepTemporaryId = this.steps[i + 1].temporaryId;
                     this.newOutcome.lastStep = false;
                     this.newOutcome.main = true;
@@ -349,7 +349,7 @@
                 }
                 console.log(this.steps[this.steps.length - 1].outcomes.length);
                 this.newOutcome.name = `Chuyển tới bước tiếp theo`;
-                this.newOutcome.description = `Mô tả ết quả đúng cho bước ${this.steps[this.steps.length - 1].name}`;
+                this.newOutcome.description = `Chuyển tới bước tiếp theo`;
                 this.newOutcome.nextStepTemporaryId = null;
                 this.newOutcome.lastStep = true;
                 this.newOutcome.main = true;

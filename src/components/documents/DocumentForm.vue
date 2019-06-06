@@ -355,9 +355,10 @@
                         this.close();
                         this.$emit("refresh");
                         var document = response.data;
-                        Axios.get('http://localhost:8080/users/search/findAllDirector').then(response => {
+                        Axios.get('http://localhost:8080/users/search/findAllDirector').
+                        then(response => {
                             var users = response.data;
-                            if (users.length > 0) {
+                            if (users.length > 0){
                                 var title = this.creating ? "Văn bản mới" : "Văn  được chỉnh sửa";
                                 var detail = document.title;
                                 var url = `/documents/${document.id}`;
