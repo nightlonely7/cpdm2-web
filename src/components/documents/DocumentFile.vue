@@ -42,7 +42,7 @@
 
             <v-container v-if="documentFiles.length">
                 <template v-for="(documentFile, index) in documentFiles">
-                    <div :key="documentFile.id">
+                    <div :key="documentFile.id" v-if="!isArchivist || (isArchivist && username === documentFile.creator.username)">
                         <br v-if="index !== 0">
                         <v-card>
                             <v-card-text>
@@ -156,7 +156,8 @@
         },
         computed: {
             ...mapGetters('AUTHENTICATION_STORE', {
-                username: 'username'
+                username: 'username',
+                isArchivist: 'isArchivist',
             }),
         },
         methods: {

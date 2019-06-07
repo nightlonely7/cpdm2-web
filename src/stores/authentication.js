@@ -39,6 +39,7 @@ export default {
         isAdmin: state => state.role === 'ADMIN',
         isManager: state => state.role === 'MANAGER',
         isStaff: state => state.role === 'STAFF',
+        isArchivist: state => state.role === 'ARCHIVIST',
         username: state => state.username
     },
     actions: {
