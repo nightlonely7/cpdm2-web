@@ -46,6 +46,11 @@ const router = new Router({
             name: 'departments',
             component: () => import('@/views/DepartmentPage.vue')
         },
+        {
+            path: '/users',
+            name: 'users',
+            component: () => import('@/views/UserPage.vue')
+        },
     ]
 })
 

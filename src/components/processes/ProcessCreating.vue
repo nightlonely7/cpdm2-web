@@ -276,6 +276,22 @@
                 Axios.get(`http://localhost:8080/users/search/executor`)
                     .then(response => {
                         this.executors = response.data;
+                        var archivistIndex = [];
+                        var removeCount = 0;
+                        for(var i in this.executors){
+                            console.log(this.executors[i].role.name === "ROLE_DOCUMENT_WRITER");
+                            if(this.executors[i].role.name === "ROLE_DOCUMENT_WRITER"){
+                                archivistIndex.push(i);
+                            }
+                        }
+                        console.log(archivistIndex);
+                        console.log(this.executors.length);
+                        for(var j in archivistIndex){
+                            console.log(archivistIndex[j]-removeCount-1);
+                            this.$delete(this.executors,archivistIndex[j]-removeCount);
+                            removeCount++;
+                        }
+                        console.log(this.executors.length);
                     })
                     .catch(console.error)
                     .finally(() => {

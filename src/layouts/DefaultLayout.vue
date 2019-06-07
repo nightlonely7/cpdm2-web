@@ -12,6 +12,14 @@
                     </v-list-tile-title>
                     <v-divider></v-divider>
                 </v-list-tile>
+                <v-list-tile to="/users" v-if="isAdmin || isManager">
+                    <v-list-tile-action>
+                        <v-icon>mdi-account</v-icon>
+                    </v-list-tile-action>
+                    <v-list-tile-content>
+                        <v-list-tile-title>Quản lý người dùng</v-list-tile-title>
+                    </v-list-tile-content>
+                </v-list-tile>
                 <v-list-tile to="/departments" v-if="isAdmin">
                     <v-list-tile-action>
                         <v-icon>mdi-home</v-icon>
@@ -24,10 +32,10 @@
                     <template #activator>
                         <v-list-tile>
                             <v-list-tile-action>
-                                <v-icon>assignment_ind</v-icon>
+                                <v-icon>mdi-folder</v-icon>
                             </v-list-tile-action>
                             <v-list-tile-content>
-                                <v-list-tile-title>Quản lí ủy quyền</v-list-tile-title>
+                                <v-list-tile-title>Quản lí văn bản</v-list-tile-title>
                             </v-list-tile-content>
                         </v-list-tile>
                     </template>
@@ -53,15 +61,15 @@
                             <v-list-tile-title>Văn bản đi</v-list-tile-title>
                         </v-list-tile-content>
                     </v-list-tile>
+                    <v-list-tile>
+                        <v-list-tile-action>
+                            <v-icon></v-icon>
+                        </v-list-tile-action>
+                        <v-list-tile-content>
+                            <v-list-tile-title>Văn bản nội bộ</v-list-tile-title>
+                        </v-list-tile-content>
+                    </v-list-tile>
                 </v-list-group>
-                <v-list-tile>
-                    <v-list-tile-action>
-                        <v-icon>mdi-home</v-icon>
-                    </v-list-tile-action>
-                    <v-list-tile-content>
-                        <v-list-tile-title>Văn bản nội bộ</v-list-tile-title>
-                    </v-list-tile-content>
-                </v-list-tile>
                 <v-list-tile to="/processes" v-if="isAdmin">
                     <v-list-tile-action>
                         <v-icon>timeline</v-icon>
@@ -122,7 +130,8 @@
         computed: {
             ...mapGetters('AUTHENTICATION_STORE', {
                 username: 'username',
-                isAdmin: 'isAdmin'
+                isAdmin: 'isAdmin',
+                isManager: 'isManager',
             }),
         },
     }
