@@ -22,6 +22,11 @@ const router = new Router({
             component: () => import('@/views/DocumentPage.vue')
         },
         {
+            path: '/internal-documents',
+            name: 'internal documents',
+            component: () => import('@/views/InternalDocumentPage.vue')
+        },
+        {
             path: '/documents/:id',
             name: 'document detail',
             component: () => import('@/views/DocumentDetailPage.vue')

@@ -493,7 +493,7 @@
                 <v-tab>
                     <v-icon color="primary">mdi-arrow-collapse-down</v-icon>&nbsp;TẤT CẢ VĂN BẢN LIÊN QUAN
                 </v-tab>
-                <v-tab>
+                <v-tab v-if="!internal">
                     <v-icon color="primary">mdi-share</v-icon>&nbsp;VĂN BẢN CHỜ XỬ LÝ
                 </v-tab>
             </v-tabs>
@@ -502,7 +502,7 @@
         <v-toolbar flat color="white">
             <v-toolbar-title>
                 <v-icon left>mdi-file-document</v-icon>
-                {{executing ? 'VĂN BẢN CHỜ XỬ LÝ' : 'QUẢN LÝ VĂN BẢN'}}
+                QUẢN LÝ VĂN BẢN
             </v-toolbar-title>
             <v-divider class="mx-2" inset vertical></v-divider>
             <v-btn color="primary" @click="refresh">
@@ -510,7 +510,7 @@
                 Tải lại
             </v-btn>
             <v-spacer></v-spacer>
-            <DocumentForm @refresh="refresh" creating v-if="isAdmin">
+            <DocumentForm @refresh="refresh" creating :internal="internal" v-if="isAdmin">
                 <template #activator="{on}">
                     <v-btn v-on="on" color="primary">
                         <v-icon left>add</v-icon>
@@ -562,10 +562,13 @@
     export default {
         name: "DocumentTable",
         components: {DocumentForm},
+        props: {
+            internal: Boolean,
+        },
         data() {
             return {
-                tabs: 1,
-                executing: Boolean,
+                tabs: 0,
+                executing: false,
                 documents: [],
                 loading: false,
                 headers: [
@@ -628,12 +631,15 @@
                 this.loading = true;
                 const url = this.executing ?
                     `http://localhost:8080/documents/search/executing` :
-                    `http://localhost:8080/documents/search/creates`;
+                    `http://localhost:8080/documents`;
                 const params = {...this.documentSearchForm};
                 params.createdTimeFrom = params.createdTimeFrom && params.createdTimeFrom.concat('T00:00');
                 params.createdTimeTo = params.createdTimeTo && params.createdTimeTo.concat('T00:00');
                 params.lastModifiedTimeFrom = params.lastModifiedTimeFrom && params.lastModifiedTimeFrom.concat('T00:00');
                 params.lastModifiedTimeTo = params.lastModifiedTimeTo && params.lastModifiedTimeTo.concat('T00:00');
+                if (this.internal) {
+                    params.internal = true;
+                }
                 console.log(params);
                 Axios.get(url, {params})
                     .then(response => {

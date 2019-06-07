@@ -1,6 +1,6 @@
 <template>
-    <DefaultLayout title="QUẢN LÝ VĂN BẢN ĐẾN">
-        <DocumentTable></DocumentTable>
+    <DefaultLayout title="QUẢN LÝ VĂN BẢN NỘI BỘ">
+        <DocumentTable internal></DocumentTable>
     </DefaultLayout>
 </template>
 

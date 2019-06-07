@@ -54,7 +54,7 @@
                         </v-list-tile-content>
                     </v-list-tile>
                 </v-list-group>
-                <v-list-tile>
+                <v-list-tile to="/internal-documents">
                     <v-list-tile-action>
                         <v-icon>mdi-home</v-icon>
                     </v-list-tile-action>

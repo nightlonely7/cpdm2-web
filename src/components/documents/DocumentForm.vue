@@ -304,6 +304,7 @@
                 }
             },
             creating: Boolean,
+            internal: Boolean,
         },
         data() {
             return {
@@ -348,8 +349,9 @@
                 const url = this.creating
                     ? `http://localhost:8080/documents`
                     : `http://localhost:8080/documents/${this.form.id}`;
-                let data = this.formData;
+                const data = this.formData;
                 data.outsiderId = data.outsider.id;
+                data.internal = this.internal;
                 console.log(data);
                 const method = this.creating ? 'POST' : 'PUT';
                 Axios({url, data, method})
