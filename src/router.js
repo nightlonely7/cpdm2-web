@@ -52,6 +52,11 @@ const router = new Router({
             component: () => import('@/views/DepartmentPage.vue')
         },
         {
+            path: '/departments/:id',
+            name: 'department detail',
+            component: () => import('@/views/DepartmentDetailPage.vue')
+        },
+        {
             path: '/users',
             name: 'users',
             component: () => import('@/views/UserPage.vue')

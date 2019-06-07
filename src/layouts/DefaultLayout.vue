@@ -12,7 +12,7 @@
                     </v-list-tile-title>
                     <v-divider></v-divider>
                 </v-list-tile>
-                <v-list-tile to="/users" v-if="isAdmin || isManager">
+                <v-list-tile to="/users" v-if="isManager">
                     <v-list-tile-action>
                         <v-icon>mdi-account</v-icon>
                     </v-list-tile-action>

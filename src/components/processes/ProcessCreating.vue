@@ -9,12 +9,6 @@
         </v-toolbar>
         <v-card class="mb-3">
             <v-card-text>
-                <!--                <v-text-field-->
-                <!--                        v-model="process.code"-->
-                <!--                        label="Mã quy trình"-->
-                <!--                        :rules="[rules.required,rules.length(50)]"-->
-                <!--                >-->
-                <!--                </v-text-field>-->
                 <v-text-field
                         ref="txtName"
                         v-model="process.name"
@@ -42,7 +36,7 @@
             </v-card-text>
             <v-stepper v-model="el" vertical v-if="steps.length>0">
                 <template v-for="step in steps ">
-                    <v-stepper-step :complete="el > step.temporaryId" :step="step.temporaryId" editable>
+                    <v-stepper-step :complete="el > step.temporaryId" :step="step.temporaryId" editable @click="goToStep(step.temporaryId)">
                         <v-text-field
                                 v-model="step.name"
                                 :rules="[rules.required,rules.length(50)]"
@@ -50,19 +44,20 @@
                     </v-stepper-step>
 
                     <v-stepper-content :step="step.temporaryId">
-                        <!--                    <v-select-->
-                        <!--                            ref="department"-->
-                        <!--                            :items="departments"-->
-                        <!--                            item-text="name"-->
-                        <!--                            item-value="temporaryId"-->
-                        <!--                            box-->
-                        <!--                            label="Chọn phòng ban"-->
-                        <!--                    ></v-select>-->
                         <v-select
-                                ref="executor"
+                                v-model="step.departmentId"
+                                :items="departments"
+                                item-text="name"
+                                item-value="id"
+                                box
+                                label="Chọn phòng ban"
+                                @input="setExecutor"
+                        ></v-select>
+                        <v-select
+                                v-if="selectedDepartmentId !== null && selectedDepartmentId !== 0"
                                 v-model="step.executorId"
-                                :items="executors"
-                                item-text="username"
+                                :items="tmpExecutors"
+                                item-text="displayName"
                                 item-value="id"
                                 box
                                 label="Chọn nhân viên phụ trách"
@@ -73,70 +68,12 @@
                                     counter="255"
                                     :rules="[rules.required, rules.length(255)]"
                         ></v-textarea>
-                        <v-btn color="success"
+                        <v-btn color="success" v-if="step.temporaryId < steps.length"
                                @click="nextStep(step.temporaryId)"
                         >
                             <v-icon>navigate_next</v-icon>
                             Bước tiếp theo
                         </v-btn>
-<!--                        <v-dialog v-model="dialog" persistent transition="dialog-bottom-transition" lazy-->
-<!--                                  max-width="600">-->
-<!--                            <template #activator="{on}">-->
-<!--                                <slot name="activator" :on="on"></slot>-->
-<!--                                <v-btn v-on="on" color="primary" @click="setDialog(step.temporaryId)"-->
-<!--                                       v-if="step.temporaryId > 1">-->
-<!--                                    <v-icon left>add</v-icon>-->
-<!--                                    Thêm bước vòng-->
-<!--                                </v-btn>-->
-<!--                            </template>-->
-<!--                            <v-card>-->
-<!--                                <v-toolbar dark color="primary">-->
-<!--                                    <v-btn icon @click="dialog = false">-->
-<!--                                        <v-icon>close</v-icon>-->
-<!--                                    </v-btn>-->
-<!--                                    <v-toolbar-title>Thêm bước vòng</v-toolbar-title>-->
-<!--                                </v-toolbar>-->
-<!--                                <v-card-text>-->
-<!--                                    <v-container>-->
-<!--                                        <v-layout wrap>-->
-<!--                                                <v-flex xs12>-->
-<!--                                                    <v-text-field-->
-<!--                                                            :key="`${step.temporaryId}_name`"-->
-<!--                                                            label="Tên bước vòng"-->
-<!--                                                            v-model="newOutcome.name"-->
-<!--                                                            :rules="[rules.required,rules.length(50)]"-->
-<!--                                                    ></v-text-field>-->
-<!--                                                </v-flex>-->
-<!--                                                <v-flex xs12>-->
-<!--                                                    <v-textarea-->
-<!--                                                                class="mb-5"-->
-<!--                                                                label="Mô tả"-->
-<!--                                                                v-model="newOutcome.description"-->
-<!--                                                                counter="255"-->
-<!--                                                                :rules="[rules.required, rules.length(255)]"-->
-<!--                                                    ></v-textarea>-->
-<!--                                                </v-flex>-->
-<!--                                                <v-flex xs12>-->
-<!--                                                    <v-select-->
-<!--                                                            v-model="newOutcome.nextStepTemporaryId"-->
-<!--                                                            :items="tmpSteps"-->
-<!--                                                            item-text="name"-->
-<!--                                                            item-value="temporaryId"-->
-<!--                                                            box-->
-<!--                                                            label="Chọn bước"-->
-<!--                                                            :rules="[rules.required]"-->
-<!--                                                    ></v-select>-->
-<!--                                                </v-flex>-->
-<!--                                            </v-layout>-->
-<!--                                    </v-container>-->
-<!--                                </v-card-text>-->
-<!--                                <v-card-actions>-->
-<!--                                    <v-spacer></v-spacer>-->
-<!--                                    <v-btn color="blue darken-1" flat @click="close">Đóng</v-btn>-->
-<!--                                    <v-btn color="blue darken-1" flat @click="save">Lưu</v-btn>-->
-<!--                                </v-card-actions>-->
-<!--                            </v-card>-->
-<!--                        </v-dialog>-->
                         <OutcomeForm :step="step" :tmpSteps="tmpSteps">
                             <template #activator="{on}">
                                 <v-btn v-on="on" color="primary" @click="setDialog(step.temporaryId)"
@@ -149,6 +86,7 @@
                         <template v-for="outcome in step.outcomes">
                             <v-btn color="error"
                                    @click="goToStep(outcome.nextStepTemporaryId)"
+                                   v-if="!outcome.main"
                             >
                                 <v-icon>navigate_next</v-icon>
                                 {{outcome.name}}
@@ -193,17 +131,16 @@
                 loading: false,
                 departments: [],
                 executors: [],
+                tmpExecutors: [],
                 el: 0,
                 numberOfSteps: 0,
                 process: {
-                    // code: null,
                     name: null,
                     description: null,
                     firstStepTemporaryId: 1,
                     steps: []
                 },
                 defaultProcess: {
-                    // code: null,
                     name: null,
                     description: null,
                     firstStepTemporaryId: 1,
@@ -214,14 +151,16 @@
                     temporaryId: 0,
                     description: null,
                     executorId: 0,
-                    outcomes: []
+                    outcomes: [],
+                    departmentId: 0,
                 },
                 defaultStep: {
                     name: "",
                     temporaryId: 0,
                     description: null,
                     executorId: 0,
-                    outcomes: []
+                    outcomes: [],
+                    departmentId: 0,
                 },
                 newOutcome: {
                     name: "",
@@ -248,7 +187,7 @@
         },
         mounted: function () {
             this.$nextTick(function () {
-                // this.getDepartment();
+                this.getDepartment();
                 this.getExecutor();
             });
         },
@@ -262,7 +201,7 @@
             },
             getDepartment() {
                 this.loading = true;
-                Axios.get(`http://localhost:8080/departments`)
+                Axios.get(`http://localhost:8080/departments/search/all`)
                     .then(response => {
                         this.departments = response.data;
                     })
@@ -279,26 +218,33 @@
                         var archivistIndex = [];
                         var removeCount = 0;
                         for(var i in this.executors){
-                            console.log(this.executors[i].role.name === "ROLE_DOCUMENT_WRITER");
                             if(this.executors[i].role.name === "ROLE_DOCUMENT_WRITER"){
                                 archivistIndex.push(i);
                             }
                         }
-                        console.log(archivistIndex);
-                        console.log(this.executors.length);
                         for(var j in archivistIndex){
-                            console.log(archivistIndex[j]-removeCount-1);
                             this.$delete(this.executors,archivistIndex[j]-removeCount);
                             removeCount++;
                         }
-                        console.log(this.executors.length);
+                        for(var i in this.executors){
+                            this.$set(this.executors[i], 'displayName', `${this.executors[i].username + " - " + this.executors[i].processRole}`);
+                        }
                     })
                     .catch(console.error)
                     .finally(() => {
                         this.loading = false;
                     })
             },
+            setExecutor(val){
+                this.tmpExecutors = [];
+                for(var i in this.executors){
+                    if(this.executors[i].department.id === val){
+                        this.tmpExecutors.push(Object.assign({},this.executors[i]));
+                    }
+                }
+            },
             nextStep(temporaryId) {
+                this.setExecutor(this.steps[temporaryId].departmentId);
                 if (temporaryId >= this.steps.length) {
                     this.el = 1;
                 } else {
@@ -306,6 +252,7 @@
                 }
             },
             goToStep(nextStepTemporaryId) {
+                this.setExecutor(this.steps[nextStepTemporaryId-1].departmentId);
                 this.el = nextStepTemporaryId;
             },
             onInput(val) {

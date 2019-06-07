@@ -64,6 +64,9 @@
                     <v-btn outline flat fab small @click="active(item.id)" color="success" v-if="!item.available">
                         <v-icon>check</v-icon>
                     </v-btn>
+                    <v-btn outline flat fab small @click="$router.push(`/departments/${item.id}`)" color="indigo">
+                        <v-icon>info</v-icon>
+                    </v-btn>
                 </td>
             </template>
         </v-data-table>

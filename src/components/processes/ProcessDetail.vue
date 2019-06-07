@@ -34,7 +34,7 @@
 
                     <v-stepper-content :step="step.id">
                         <v-text-field
-                                    v-model="step.executor.username"
+                                    v-model="step.executor.username + ' - ' + step.executor.processRole"
                                     label="Người phụ trách"
                                     readonly>
                         </v-text-field>
