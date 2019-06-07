@@ -19,7 +19,9 @@
                         >mdi-check
                         </v-icon>
                     </template>
-                    <span>{{step.name}}</span>
+                    <span>{{step.name}} - {{step.description}}</span>
+                    <br>
+                    <span>Người xử lý: {{step.executor.username}}</span>
                 </v-tooltip>
 
                 <v-tooltip bottom v-if="step.id === document.currentStep.id">
@@ -34,7 +36,9 @@
                         >mdi-file-document
                         </v-icon>
                     </template>
-                    <span>{{step.name}}</span>
+                    <span>{{step.name}} - {{step.description}}</span>
+                    <br>
+                    <span>Người xử lý: {{step.executor.username}}</span>
                 </v-tooltip>
 
                 <v-tooltip bottom v-if="step.id !== document.currentStep.id && index > currentIndex">
@@ -49,7 +53,9 @@
                         >mdi-dots-horizontal
                         </v-icon>
                     </template>
-                    <span>{{step.name}}</span>
+                    <span>{{step.name}} - {{step.description}}</span>
+                    <br>
+                    <span>Người xử lý: {{step.executor.username}}</span>
                 </v-tooltip>
 
                 <v-icon color="primary" v-if="index !== process.steps.length - 1"

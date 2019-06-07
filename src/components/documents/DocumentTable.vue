@@ -14,6 +14,18 @@
                                       label="Tìm bởi số hiệu"
                                       clearable
                         ></v-text-field>
+                        <v-select
+                                v-model="documentSearchForm.typeId"
+                                :items="typeOptions"
+                                item-value="id"
+                                item-text="name"
+                                append-outer-icon="mdi-refresh"
+                                @click:append-outer="getTypeOptions"
+                                label="Loại văn bản"
+                                clearable
+                                hide-no-data
+                        >
+                        </v-select>
                         <v-text-field v-model.trim="documentSearchForm.title"
                                       label="Tìm bởi tiêu đề"
                                       clearable
@@ -491,10 +503,16 @@
                     color="transparent"
             >
                 <v-tab>
-                    <v-icon color="primary">mdi-arrow-collapse-down</v-icon>&nbsp;TẤT CẢ VĂN BẢN LIÊN QUAN
+                    <v-icon color="primary">mdi-arrow-collapse-down</v-icon>&nbsp;
+                    TẤT CẢ VĂN BẢN LIÊN QUAN
                 </v-tab>
-                <v-tab v-if="!internal">
-                    <v-icon color="primary">mdi-share</v-icon>&nbsp;VĂN BẢN CHỜ XỬ LÝ
+                <v-tab v-show="!internal && !isArchivist">
+                    <v-icon color="primary">mdi-share</v-icon>&nbsp;
+                    VĂN BẢN CHỜ XỬ LÝ
+                </v-tab>
+                <v-tab v-show="isArchivist">
+                    <v-icon color="primary">mdi-share</v-icon>&nbsp;
+                    VĂN BẢN BỊ TỪ CHỐI
                 </v-tab>
             </v-tabs>
 
@@ -539,11 +557,13 @@
 
             <template #items="{item}">
                 <td class="text-xs-left">{{item.code}}</td>
+                <td class="text-xs-left">{{item.type.name}}</td>
                 <td class="text-xs-left">{{item.title}}</td>
                 <td class="text-xs-left">{{item.summary}}</td>
                 <td class="text-xs-left">{{item.outsider.name}}</td>
                 <td class="text-xs-left">{{moment(item.createdTime).format('HH:mm:ss DD/MM/YYYY')}}</td>
                 <td class="text-xs-left">{{moment(item.arrivalDate).format('DD/MM/YYYY')}}</td>
+                <td class="text-xs-left">{{item.processed ? 'Đã xử lý': 'Chưa xử lý'}}</td>
                 <td class="text-xs-left">
                     <router-link :to="`/documents/${item.id}`">Xem chi tiết</router-link>
                 </td>
@@ -569,15 +589,18 @@
             return {
                 tabs: 0,
                 executing: false,
+                rejected: false,
                 documents: [],
                 loading: false,
                 headers: [
                     {text: 'Số hiệu', value: 'code'},
+                    {text: 'Loại', value: 'type.name'},
                     {text: 'Tiêu đề', value: 'title'},
                     {text: 'Trích yếu', value: 'summary'},
                     {text: 'Nơi ban hành', value: 'outsider.name'},
                     {text: 'Thời gian tạo', value: 'createdTime'},
                     {text: 'Ngày nhận', value: 'arrivalDate'},
+                    {text: 'Trạng thái', value: 'processed'},
                     {text: 'Thao tác', value: null},
                 ],
                 pagination: {
@@ -586,6 +609,7 @@
                 },
                 documentSearchForm: {
                     code: null,
+                    typeId: null,
                     title: null,
                     summary: null,
                     decree: null,
@@ -616,6 +640,7 @@
                 effectiveDateToMenu: false,
                 effectiveEndDateFromMenu: false,
                 effectiveEndDateToMenu: false,
+                typeOptions: [],
             }
         },
         computed: {
@@ -641,6 +666,12 @@
                 if (this.internal) {
                     params.internal = true;
                 }
+                if (this.isAdmin) {
+                    params.sent = true;
+                }
+                if (this.rejected) {
+                    params.rejected = true;
+                }
                 console.log(params);
                 Axios.get(url, {params})
                     .then(response => {
@@ -655,7 +686,17 @@
                 Object.keys(this.documentSearchForm).forEach(index =>
                     this.documentSearchForm[index] = null
                 );
-            }
+            },
+            getTypeOptions() {
+                Axios.get(`http://localhost:8080/document-types`)
+                    .then(response => {
+                        this.typeOptions = response.data;
+                    })
+                    .catch(error => {
+                        if (error.response)
+                            console.log(error.response);
+                    })
+            },
         },
         watch: {
             pagination() {
@@ -665,10 +706,17 @@
                 switch (val) {
                     case 0:
                         this.executing = false;
+                        this.rejected = false;
                         this.getDocuments();
                         break;
                     case 1:
                         this.executing = true;
+                        this.rejected = false;
+                        this.getDocuments();
+                        break;
+                    case 2:
+                        this.executing = false;
+                        this.rejected = true;
                         this.getDocuments();
                         break;
                     default:
@@ -685,6 +733,9 @@
         },
         created() {
             this.debouncedGetDocuments = _.debounce(this.getDocuments, 500);
+        },
+        mounted() {
+            this.getTypeOptions();
         }
     }
 </script>

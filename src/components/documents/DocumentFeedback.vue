@@ -74,7 +74,7 @@
                                 <br>
 
                                 <p>
-                                    <span style="width: 25%; float: left">Thời điểm bắt đầu</span>
+                                    <span style="width: 25%; float: left">Thời điểm bắt đầu xử lý</span>
                                     <span style="width: 25%; float: left">
                                         {{moment(feedback.arrivalTime).format('HH:mm:ss DD/MM/YYYY')}}
                                 </span>
@@ -85,7 +85,7 @@
                                 <br>
 
                                 <p>
-                                    <span style="width: 25%; float: left">Thời điểm hoàn tất</span>
+                                    <span style="width: 25%; float: left">Thời điểm hoàn tất xử lý</span>
                                     <span style="width: 25%; float: left">
                                         {{moment(feedback.completedTime).format('HH:mm:ss DD/MM/YYYY')}}
                                 </span>

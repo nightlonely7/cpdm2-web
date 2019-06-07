@@ -14,6 +14,10 @@
                     <td>{{document.code}}</td>
                 </tr>
                 <tr>
+                    <td>Loại văn bản</td>
+                    <td>{{document.type.name}}</td>
+                </tr>
+                <tr>
                     <td>Nơi ban hành</td>
                     <td>{{document.outsider.name}} - {{document.outsider.code}}</td>
                 </tr>
@@ -69,7 +73,10 @@
             <br>
 
             <DocumentPutIntoProcessForm :id="id" @refresh="getDocumentDetail"
-                                        v-if="!document.startedProcessing && !document.processed && isAdmin && !document.internal">
+                                        v-if="!document.startedProcessing
+                                        && !document.processed
+                                        && document.approved
+                                        && isAdmin && !document.internal">
                 <template #activator="{on}">
                     <v-btn v-on="on" color="primary">
                         <v-icon left>build</v-icon>
@@ -77,6 +84,14 @@
                     </v-btn>
                 </template>
             </DocumentPutIntoProcessForm>
+
+            <v-btn v-if="isArchivist && !document.sent" color="primary" @click="sendToApprove">GỬI GIÁM ĐỐC</v-btn>
+            <v-btn v-if="isAdmin && document.sent && !document.approved && !document.rejected" color="primary"
+                   @click="approve">PHÊ DUYỆT VĂN BẢN
+            </v-btn>
+            <v-btn v-if="isAdmin && document.sent && !document.approved && !document.rejected" color="primary"
+                   @click="reject">TỪ CHỐI VĂN BẢN
+            </v-btn>
 
             <DocumentForm @refresh="getDocumentDetail" v-if="isArchivist" :form="{...document}">
                 <template #activator="{on}">
@@ -87,7 +102,9 @@
                 </template>
             </DocumentForm>
 
-            <v-btn v-if="isAdmin && !document.processed && !document.startedProcessing" color="primary" @click="closeProcess">Đóng văn bản</v-btn>
+            <v-btn v-if="isAdmin && !document.processed && !document.startedProcessing" color="primary"
+                   @click="closeProcess">Đóng văn bản
+            </v-btn>
 
             <template v-if="document.currentStep && (document.currentStep.executor.username === username)">
                 <DocumentExecutingForm :document="{...document}" @refresh="getDocumentDetail">
@@ -140,7 +157,8 @@
         computed: {
             ...mapGetters('AUTHENTICATION_STORE', {
                 username: 'username',
-                isAdmin: 'isAdmin'
+                isAdmin: 'isAdmin',
+                isArchivist: 'isArchivist',
             })
         },
         methods: {
@@ -168,6 +186,51 @@
             closeProcess() {
                 if (confirm('Bạn muốn đóng văn bản này chứ ?')) {
                     Axios.patch(`http://localhost:8080/documents/${this.id}/close_process`)
+                        .then(() => {
+                            this.getDocumentDetail();
+                        })
+                        .catch(error => {
+                            if (error.response) {
+                                console.log(error.response);
+                            } else {
+                                console.log(error)
+                            }
+                        })
+                }
+            },
+            sendToApprove() {
+                if (confirm('Bạn muốn gửi cho giám đốc văn bản này chứ ?')) {
+                    Axios.patch(`http://localhost:8080/documents/${this.id}/send_to_approve`)
+                        .then(() => {
+                            this.getDocumentDetail();
+                        })
+                        .catch(error => {
+                            if (error.response) {
+                                console.log(error.response);
+                            } else {
+                                console.log(error)
+                            }
+                        })
+                }
+            },
+            approve() {
+                if (confirm('Bạn muốn gửi cho giám đốc văn bản này chứ ?')) {
+                    Axios.patch(`http://localhost:8080/documents/${this.id}/approve`)
+                        .then(() => {
+                            this.getDocumentDetail();
+                        })
+                        .catch(error => {
+                            if (error.response) {
+                                console.log(error.response);
+                            } else {
+                                console.log(error)
+                            }
+                        })
+                }
+            },
+            reject() {
+                if (confirm('Bạn muốn gửi cho giám đốc văn bản này chứ ?')) {
+                    Axios.patch(`http://localhost:8080/documents/${this.id}/reject`)
                         .then(() => {
                             this.getDocumentDetail();
                         })

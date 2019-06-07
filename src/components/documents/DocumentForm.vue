@@ -23,6 +23,21 @@
                         </v-flex>
 
                         <v-flex xs12>
+                            <v-select
+                                    v-model="formData.type.id"
+                                    :items="typeOptions"
+                                    item-value="id"
+                                    item-text="name"
+                                    append-outer-icon="mdi-refresh"
+                                    @click:append-outer="getTypeOptions"
+                                    label="Loại văn bản"
+                                    clearable
+                                    hide-no-data
+                            >
+                            </v-select>
+                        </v-flex>
+
+                        <v-flex xs12>
                             <v-text-field
                                     label="Tiêu đề"
                                     v-model="formData.title"
@@ -301,6 +316,9 @@
                         effectiveEndDate: null,
                         outsider: {
                             id: null,
+                        },
+                        type: {
+                            id: null,
                         }
                     }
                 }
@@ -335,6 +353,7 @@
                 documentTemplate: null,
                 templateOptions: [],
                 templateOptionsLoading: false,
+                typeOptions: [],
             }
         },
         computed: {
@@ -353,6 +372,7 @@
                     : `http://localhost:8080/documents/${this.form.id}`;
                 const data = this.formData;
                 data.outsiderId = data.outsider.id;
+                data.typeId = data.type.id;
                 data.internal = this.internal;
                 console.log(data);
                 const method = this.creating ? 'POST' : 'PUT';
@@ -425,6 +445,16 @@
                         this.templateOptionsLoading = false;
                     })
             },
+            getTypeOptions() {
+                Axios.get(`http://localhost:8080/document-types`)
+                    .then(response => {
+                        this.typeOptions = response.data;
+                    })
+                    .catch(error => {
+                        if (error.response)
+                            console.log(error.response);
+                    })
+            },
             getTemplateDetail() {
                 console.log('get template detail');
                 Axios.get(`http://localhost:8080/templates/${this.templateId}`)
@@ -448,6 +478,7 @@
                 if (val && !this.loaded) {
                     this.getTemplateOptions();
                     this.getOutsiderOptions();
+                    this.getTypeOptions();
                     this.loaded = true;
                 }
             },
