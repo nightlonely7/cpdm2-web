@@ -510,7 +510,7 @@
                 Tải lại
             </v-btn>
             <v-spacer></v-spacer>
-            <DocumentForm @refresh="refresh" creating :internal="internal" v-if="isAdmin">
+            <DocumentForm @refresh="refresh" creating :internal="internal" v-if="isAdmin || isArchivist">
                 <template #activator="{on}">
                     <v-btn v-on="on" color="primary">
                         <v-icon left>add</v-icon>
@@ -620,7 +620,8 @@
         },
         computed: {
             ...mapGetters('AUTHENTICATION_STORE', {
-                isAdmin: 'isAdmin'
+                isAdmin: 'isAdmin',
+                isArchivist: 'isArchivist'
             })
         },
         methods: {

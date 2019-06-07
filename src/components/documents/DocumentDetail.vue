@@ -41,7 +41,7 @@
                     <td>Thời gian tạo</td>
                     <td>{{moment(document.createdTime).format('HH:mm:ss DD/MM/YYYY')}}</td>
                 </tr>
-                <tr v-if="isAdmin">
+                <tr v-if="isAdmin && !document.internal">
                     <td>Quá trình xử lý</td>
                     <td>
                         <DocumentProcessTracking :document="{...document}"></DocumentProcessTracking>
@@ -69,7 +69,7 @@
             <br>
 
             <DocumentPutIntoProcessForm :id="id" @refresh="getDocumentDetail"
-                                        v-if="!document.startedProcessing && isAdmin">
+                                        v-if="!document.startedProcessing && !document.processed && isAdmin && !document.internal">
                 <template #activator="{on}">
                     <v-btn v-on="on" color="primary">
                         <v-icon left>build</v-icon>
@@ -78,7 +78,7 @@
                 </template>
             </DocumentPutIntoProcessForm>
 
-            <DocumentForm @refresh="getDocumentDetail" v-if="isAdmin" :form="{...document}">
+            <DocumentForm @refresh="getDocumentDetail" v-if="isArchivist" :form="{...document}">
                 <template #activator="{on}">
                     <v-btn v-on="on" color="primary">
                         <v-icon left>mdi-pencil</v-icon>
@@ -86,6 +86,8 @@
                     </v-btn>
                 </template>
             </DocumentForm>
+
+            <v-btn v-if="isAdmin && !document.processed && !document.startedProcessing" color="primary" @click="closeProcess">Đóng văn bản</v-btn>
 
             <template v-if="document.currentStep && (document.currentStep.executor.username === username)">
                 <DocumentExecutingForm :document="{...document}" @refresh="getDocumentDetail">
@@ -161,7 +163,22 @@
                         .finally(() => {
                             this.loading = false;
                         })
-                }, 1000);
+                }, 500);
+            },
+            closeProcess() {
+                if (confirm('Bạn muốn đóng văn bản này chứ ?')) {
+                    Axios.patch(`http://localhost:8080/documents/${this.id}/close_process`)
+                        .then(() => {
+                            this.getDocumentDetail();
+                        })
+                        .catch(error => {
+                            if (error.response) {
+                                console.log(error.response);
+                            } else {
+                                console.log(error)
+                            }
+                        })
+                }
             },
         },
         mounted() {

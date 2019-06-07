@@ -37,6 +37,8 @@
                                     :item-text="itemText"
                                     :loading="outsiderOptionsLoading"
                                     :search-input.sync="outsiderOptionsSearch"
+                                    append-outer-icon="mdi-refresh"
+                                    @click:append-outer="getOutsiderOptions"
                                     label="Nơi ban hành"
                                     clearable
                                     hide-no-data
