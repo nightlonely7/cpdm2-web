@@ -10,7 +10,7 @@
     "@ckeditor/ckeditor5-build-decoupled-document": "^12.1.0",
     "@ckeditor/ckeditor5-vue": "^1.0.0-beta.2",
     "@mdi/font": "^3.5.95",
-    "axios": "^0.18.0",
+    "axios": "^0.21.1",
     "downloadjs": "^1.4.7",
     "firebase": "^6.1.0",
     "lodash": "^4.17.11",
